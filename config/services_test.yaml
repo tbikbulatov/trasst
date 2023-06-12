@@ -1,0 +1,10 @@
+framework:
+    test: true
+
+services:
+    _defaults:
+        autoconfigure: true
+        autowire: true
+
+    App\Assistance\Domain\TaxResidencyAnalyzer:
+        public: true
