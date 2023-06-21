@@ -6,15 +6,27 @@ services:
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
     _instanceof:
+        App\Shared\Application\Command\CommandHandlerInterface:
+            tags:
+                - { name: messenger.message_handler, bus: command.bus }
+        App\Shared\Application\Query\QueryHandlerInterface:
+            tags:
+                - { name: messenger.message_handler, bus: query.bus }
+
         App\Assistance\Domain\CountryPolicy\CountryTaxResidencyPolicyInterface:
-            tags: [ 'app.assistance.country.tax.residency.policy' ]
+            tags: ['app.assistance.country.tax.residency.policy']
 
     App\:
         resource: '../src/'
         exclude:
+            - '../src/Assistance/Infrastructure/Ui/Http/Resource/'
             - '../src/DependencyInjection/'
             - '../src/Entity/'
-            - '../src/Kernel.php'
+            - '../src/Shared/Infrastructure/Symfony/Kernel.php'
+
+    App\Assistance\Infrastructure\Ui\Http\Controller\:
+        resource: '../src/Assistance/Infrastructure/Ui/Http/Controller/'
+        tags: ['controller.service_arguments']
 
     App\Assistance\Infrastructure\Registry\CountryTaxResidencyPoliciesRegistry:
         arguments:
