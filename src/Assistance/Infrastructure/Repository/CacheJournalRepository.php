@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Assistance\Infrastructure\Repository;
 
 use App\Assistance\Domain\Entity\Journal;
+use App\Assistance\Domain\Exception\JournalNotFoundException;
 use App\Assistance\Domain\JournalRepositoryInterface;
 use App\Assistance\Domain\ValueObject\JournalId;
+use Psr\Cache\CacheItemInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 
 final readonly class CacheJournalRepository implements JournalRepositoryInterface
@@ -17,7 +19,23 @@ final readonly class CacheJournalRepository implements JournalRepositoryInterfac
 
     public function get(JournalId $id): Journal
     {
+        /** @var CacheItemInterface $cacheItem */
+        $cacheItem = $this->journalCache->getItem($id->value);
+        if (!$cacheItem->isHit()) {
+            throw JournalNotFoundException::withId($id);
+        }
+
+        return $cacheItem->get();
+    }
+
+    public function findOne(JournalId $id): ?Journal
+    {
         return $this->journalCache->getItem($id->value)->get();
+    }
+
+    public function remove(Journal $journal): void
+    {
+        $this->journalCache->delete($journal->getId()->value);
     }
 
     public function save(Journal $journal): void

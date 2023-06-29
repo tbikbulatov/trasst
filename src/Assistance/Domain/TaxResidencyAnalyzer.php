@@ -15,7 +15,7 @@ final readonly class TaxResidencyAnalyzer
         private CountryTaxResidencyPoliciesRegistryInterface $policiesRegistry,
     ) {}
 
-    public function execute(Journal $journal): AnalysisOutcome
+    public function analyze(Journal $journal): AnalysisOutcome
     {
         $countriesOutcomes = [];
         foreach ($journal->splitByCountries() as $countryJournal) {

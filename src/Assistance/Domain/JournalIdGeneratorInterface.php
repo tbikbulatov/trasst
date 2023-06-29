@@ -8,5 +8,5 @@ use App\Assistance\Domain\ValueObject\JournalId;
 
 interface JournalIdGeneratorInterface
 {
-    public static function generate(): JournalId;
+    public function generate(): JournalId;
 }

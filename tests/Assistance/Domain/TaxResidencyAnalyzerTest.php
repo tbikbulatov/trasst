@@ -22,6 +22,15 @@ use Generator;
 
 final class TaxResidencyAnalyzerTest extends BaseKernelTestCase
 {
+    private JournalIdGenerator $journalIdGenerator;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->journalIdGenerator = new JournalIdGenerator();
+    }
+
     /**
      * @param array<string, array<int>> $expectations
      * @dataProvider analysisOutcomeProvider
@@ -32,7 +41,7 @@ final class TaxResidencyAnalyzerTest extends BaseKernelTestCase
     ): void {
         $sut = self::get(TaxResidencyAnalyzer::class);
 
-        $outcome = $sut->execute($journal);
+        $outcome = $sut->analyze($journal);
 
         $this->assertCount(count($expectations), $outcome);
         foreach ($outcome as $countryOutcome) {
@@ -46,6 +55,7 @@ final class TaxResidencyAnalyzerTest extends BaseKernelTestCase
      */
     private function analysisOutcomeProvider(): Generator
     {
+        $journalIdGenerator = new JournalIdGenerator();
         $purpose = StayPurpose::TOURISM;
         $country1 = CountryCode::ARMENIA;
         $country2 = CountryCode::GEORGIA;
@@ -56,7 +66,7 @@ final class TaxResidencyAnalyzerTest extends BaseKernelTestCase
             [
                 $country1->value => [2022],
             ],
-            new Journal(JournalIdGenerator::generate(), [
+            new Journal($journalIdGenerator->generate(), [
                 new Stay($country1, $purpose, new Date('2022-01-01'), new Date('2022-03-31')),
             ])
         ];
@@ -67,7 +77,7 @@ final class TaxResidencyAnalyzerTest extends BaseKernelTestCase
                 $country3->value => [2022],
                 $country4->value => [2022],
             ],
-            new Journal(JournalIdGenerator::generate(), [
+            new Journal($journalIdGenerator->generate(), [
                 new Stay($country1, $purpose, new Date('2022-01-01'), new Date('2022-03-31')),
                 new Stay($country2, $purpose, new Date('2022-04-01'), new Date('2022-06-30')),
                 new Stay($country3, $purpose, new Date('2022-07-01'), new Date('2022-09-30')),
@@ -78,7 +88,7 @@ final class TaxResidencyAnalyzerTest extends BaseKernelTestCase
             [
                 $country1->value => [2021, 2022, 2023],
             ],
-            new Journal(JournalIdGenerator::generate(), [
+            new Journal($journalIdGenerator->generate(), [
                 new Stay($country1, $purpose, new Date('2021-01-01'), new Date('2023-12-31')),
             ])
         ];
@@ -86,7 +96,7 @@ final class TaxResidencyAnalyzerTest extends BaseKernelTestCase
             [
                 $country1->value => [2021, 2022, 2023],
             ],
-            new Journal(JournalIdGenerator::generate(), [
+            new Journal($journalIdGenerator->generate(), [
                 new Stay($country1, $purpose, new Date('2021-12-31'), new Date('2023-01-01'))
             ])
         ];
@@ -97,7 +107,7 @@ final class TaxResidencyAnalyzerTest extends BaseKernelTestCase
                 $country3->value => [2021, 2022, 2023],
                 $country4->value => [2021, 2022, 2023],
             ],
-            new Journal(JournalIdGenerator::generate(), [
+            new Journal($journalIdGenerator->generate(), [
                 new Stay($country1, $purpose, new Date('2021-01-01'), new Date('2021-03-31')),
                 new Stay($country1, $purpose, new Date('2022-01-01'), new Date('2022-03-31')),
                 new Stay($country1, $purpose, new Date('2023-01-01'), new Date('2023-03-31')),
@@ -119,7 +129,7 @@ final class TaxResidencyAnalyzerTest extends BaseKernelTestCase
                 $country3->value => [2017, 2018, 2019],
                 $country4->value => [2019, 2021, 2022, 2023],
             ],
-            new Journal(JournalIdGenerator::generate(), [
+            new Journal($journalIdGenerator->generate(), [
                 new Stay($country1, $purpose, new Date('2021-01-01'), new Date('2021-03-31')),
                 new Stay($country1, $purpose, new Date('2022-01-01'), new Date('2022-03-31')),
                 new Stay($country2, $purpose, new Date('2020-04-01'), new Date('2020-06-30')),
@@ -140,7 +150,7 @@ final class TaxResidencyAnalyzerTest extends BaseKernelTestCase
         $countryTaxPolicy = CountryTaxPolicyMother::create($rules);
         $country = CountryCode::from($countryTaxPolicy::getCountryCode());
         $purpose = StayPurpose::TOURISM;
-        $journal = new Journal(JournalIdGenerator::generate(), [
+        $journal = new Journal($this->journalIdGenerator->generate(), [
             new Stay($country, $purpose, new Date('2022-01-01'), new Date('2022-01-31')),
         ]);
         $policiesRegistry = $this->createStub(CountryTaxResidencyPoliciesRegistryInterface::class);
@@ -148,7 +158,7 @@ final class TaxResidencyAnalyzerTest extends BaseKernelTestCase
         $policiesRegistry->method('get')->willReturn($countryTaxPolicy);
         $sut = new TaxResidencyAnalyzer($policiesRegistry);
 
-        $outcome = $sut->execute($journal);
+        $outcome = $sut->analyze($journal);
 
         $this->assertCount(1, $outcome);
     }
@@ -187,7 +197,7 @@ final class TaxResidencyAnalyzerTest extends BaseKernelTestCase
         $countryTaxPolicy = CountryTaxPolicyMother::create($rules);
         $country = CountryCode::from($countryTaxPolicy::getCountryCode());
         $purpose = StayPurpose::TOURISM;
-        $journal = new Journal(JournalIdGenerator::generate(), [
+        $journal = new Journal($this->journalIdGenerator->generate(), [
             new Stay($country, $purpose, new Date("$year-01-01"), new Date("$year-12-31")),
         ]);
         $policiesRegistry = $this->createStub(CountryTaxResidencyPoliciesRegistryInterface::class);
@@ -195,7 +205,7 @@ final class TaxResidencyAnalyzerTest extends BaseKernelTestCase
         $policiesRegistry->method('get')->willReturn($countryTaxPolicy);
         $sut = new TaxResidencyAnalyzer($policiesRegistry);
 
-        $outcome = $sut->execute($journal);
+        $outcome = $sut->analyze($journal);
 
         $this->assertCount(1, $outcome, 'One country outcome expected');
         $this->assertCount(1, $outcome->current()->yearsOutcomes, 'One year outcome expected');

@@ -1,0 +1,7 @@
+api_platform:
+    resource_class_directories:
+        - '%kernel.project_dir%/src/Assistance/Infrastructure/ApiPlatform/Resource/'
+    swagger:
+        versions: [3]
+    defaults:
+        collectDenormalizationErrors: true

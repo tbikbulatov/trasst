@@ -14,11 +14,20 @@ use PHPUnit\Framework\TestCase;
 
 class JournalTest extends TestCase
 {
+    private JournalIdGenerator $journalIdGenerator;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->journalIdGenerator = new JournalIdGenerator();
+    }
+
     public function testJournalCantBeEmpty()
     {
         $this->expectException(InvalidArgumentException::class);
 
-        new Journal(JournalIdGenerator::generate(), []);
+        new Journal($this->journalIdGenerator->generate(), []);
     }
 
     public function testJournalKeepAllStays()
@@ -28,7 +37,7 @@ class JournalTest extends TestCase
         $stay1 = new Stay($country, $purpose, new Date('2022-01-01'), new Date('2022-04-01'));
         $stay2 = new Stay($country, $purpose, new Date('2022-05-01'), new Date('2022-06-01'));
 
-        $sut = new Journal(JournalIdGenerator::generate(), [$stay1, $stay2]);
+        $sut = new Journal($this->journalIdGenerator->generate(), [$stay1, $stay2]);
 
         $this->assertCount(2, $sut);
         $this->assertEquals($stay1, $sut->current());
@@ -40,7 +49,7 @@ class JournalTest extends TestCase
     {
         $stay = new Stay(CountryCode::ARMENIA, StayPurpose::TOURISM, new Date('2022-01-01'), new Date('2022-04-01'));
 
-        $sut = new Journal(JournalIdGenerator::generate(), [$stay]);
+        $sut = new Journal($this->journalIdGenerator->generate(), [$stay]);
 
         $this->assertCount(1, $sut);
         $this->assertEquals($stay, $sut->current());
@@ -51,7 +60,7 @@ class JournalTest extends TestCase
         $stay1 = new Stay(CountryCode::ARMENIA, StayPurpose::TOURISM, new Date('2022-01-01'), new Date('2022-04-01'));
         $stay2 = new Stay(CountryCode::TURKEY, StayPurpose::TOURISM, new Date('2022-04-01'), new Date('2022-06-01'));
 
-        $sut = new Journal(JournalIdGenerator::generate(), [$stay1, $stay2]);
+        $sut = new Journal($this->journalIdGenerator->generate(), [$stay1, $stay2]);
 
         $this->assertCount(2, $sut);
     }
@@ -63,7 +72,7 @@ class JournalTest extends TestCase
 
         $this->expectException(StayDatesOverlappingException::class);
 
-        new Journal(JournalIdGenerator::generate(), [$stay1, $stay2]);
+        new Journal($this->journalIdGenerator->generate(), [$stay1, $stay2]);
     }
 
     public function testSplitByCountriesGroupsStaysCorrectly(): void
@@ -82,7 +91,7 @@ class JournalTest extends TestCase
             $g2 = new Stay($georgia, $purpose, new Date('2023-03-01'), new Date('2023-03-31')),
             $r1 = new Stay($russia, $purpose, new Date('2023-05-01'), new Date('2023-05-31')),
         ];
-        $sut = new Journal(JournalIdGenerator::generate(), $stays);
+        $sut = new Journal($this->journalIdGenerator->generate(), $stays);
 
         $countryJournals = $sut->splitByCountries();
 

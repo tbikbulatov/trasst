@@ -46,6 +46,14 @@ class Journal implements Countable, Iterator
     }
 
     /**
+     * @return array<Stay>
+     */
+    public function getStays(): array
+    {
+        return $this->stays;
+    }
+
+    /**
      * @return array<CountryJournal>
      */
     public function splitByCountries(): array

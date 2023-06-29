@@ -10,7 +10,7 @@ use App\Shared\Infrastructure\IdGenerator\SymfonyUuidV7Generator;
 
 final class JournalIdGenerator extends SymfonyUuidV7Generator implements JournalIdGeneratorInterface
 {
-    public static function generate(): JournalId
+    public function generate(): JournalId
     {
         return new JournalId(self::randomInRfc4122());
     }
