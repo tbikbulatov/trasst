@@ -21,6 +21,9 @@ final readonly class YearOutcome
         return new self($year, false);
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function sumUp(self $yearOutcome): self
     {
         $this->year->equals($yearOutcome->year) ?? throw new InvalidArgumentException('Years does not match');

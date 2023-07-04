@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Assistance\Domain\Entity;
 
-use App\Assistance\Domain\Exception\StayDatesOverlappingException;
+use App\Assistance\Domain\Exception\JournalHaveNoStaysException;
+use App\Assistance\Domain\Exception\JournalStaysDatesOverlapsException;
+use App\Assistance\Domain\Exception\StaysDatesOverlapsException;
 use App\Assistance\Domain\Traits\StayDatesOverlappingValidationTrait;
 use App\Assistance\Domain\ValueObject\CountryJournal;
 use App\Assistance\Domain\ValueObject\JournalId;
@@ -27,7 +29,8 @@ class Journal implements Countable, Iterator
     /**
      * @param array<Stay> $stays
      * @throws InvalidArgumentException
-     * @throws StayDatesOverlappingException
+     * @throws JournalHaveNoStaysException
+     * @throws JournalStaysDatesOverlapsException
      */
     public function __construct(JournalId $id, array $stays)
     {
@@ -118,15 +121,19 @@ class Journal implements Countable, Iterator
 
     /**
      * @param array<Stay> $stays
-     * @throws InvalidArgumentException
-     * @throws StayDatesOverlappingException
+     * @throws JournalHaveNoStaysException
+     * @throws JournalStaysDatesOverlapsException
      */
     private function validate(array $stays): void
     {
         if (empty($stays)) {
-            throw new InvalidArgumentException("Stays can't be empty");
+            throw new JournalHaveNoStaysException();
         }
 
-        $this->validateStayDatesOverlapping($stays);
+        try {
+            $this->validateStayDatesOverlapping($stays);
+        } catch (StaysDatesOverlapsException $e) {
+            throw JournalStaysDatesOverlapsException::fromPrevious($e);
+        }
     }
 }

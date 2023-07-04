@@ -34,6 +34,10 @@ use Symfony\Component\Validator\Constraints as Assert;
         'disable_type_enforcement' => true,
         'groups' => ['write'],
     ],
+    exceptionToStatus: [
+        JournalNotFoundException::class => 404,
+        JournalValidationException::class => 400,
+    ],
 )]
 final class JournalResource
 {

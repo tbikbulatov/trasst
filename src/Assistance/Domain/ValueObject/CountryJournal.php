@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Assistance\Domain\ValueObject;
 
+use App\Assistance\Domain\Exception\StaysDatesOverlapsException;
 use App\Assistance\Domain\Traits\StayDatesOverlappingValidationTrait;
+use App\Shared\Domain\Exception\ValidationException;
 use Countable;
 use InvalidArgumentException;
 use Iterator;
@@ -23,6 +25,8 @@ final class CountryJournal implements Countable, Iterator
     /**
      * @param array<Stay> $stays
      * @throws InvalidArgumentException
+     * @throws ValidationException
+     * @throws StaysDatesOverlapsException
      */
     public function __construct(array $stays)
     {
@@ -85,16 +89,18 @@ final class CountryJournal implements Countable, Iterator
 
     /**
      * @param array<Stay> $stays
+     * @throws ValidationException
+     * @throws StaysDatesOverlapsException
      */
     private function validate(array $stays): void
     {
         if (empty($stays)) {
-            throw new InvalidArgumentException("Stays can't be empty");
+            throw new ValidationException('Country journal must contain stays');
         }
 
         $countries = array_map(fn (Stay $s) => $s->country->value, $stays);
         if (count(array_unique($countries)) > 1) {
-            throw new InvalidArgumentException('Country journal must contain only one country stays');
+            throw new ValidationException('Country journal must contain only one country stays');
         }
 
         $this->validateStayDatesOverlapping($stays);

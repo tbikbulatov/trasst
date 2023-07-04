@@ -2,20 +2,20 @@
 
 namespace App\Tests\Assistance\Domain\ValueObject;
 
-use App\Assistance\Domain\Exception\StayDatesOverlappingException;
+use App\Assistance\Domain\Exception\StaysDatesOverlapsException;
 use App\Assistance\Domain\ValueObject\CountryCode;
 use App\Assistance\Domain\ValueObject\CountryJournal;
 use App\Assistance\Domain\ValueObject\Stay;
 use App\Assistance\Domain\ValueObject\StayPurpose;
+use App\Shared\Domain\Exception\ValidationException;
 use DateTimeImmutable as Date;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 final class CountryJournalTest extends TestCase
 {
     public function testCountryJournalCantBeEmpty()
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(ValidationException::class);
 
         new CountryJournal([]);
     }
@@ -25,7 +25,7 @@ final class CountryJournalTest extends TestCase
         $stay1 = new Stay(CountryCode::ARMENIA, StayPurpose::TOURISM, new Date('2022-01-01'), new Date('2022-04-01'));
         $stay2 = new Stay(CountryCode::TURKEY, StayPurpose::TOURISM, new Date('2022-05-01'), new Date('2022-05-31'));
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(ValidationException::class);
 
         new CountryJournal([$stay1, $stay2]);
     }
@@ -74,7 +74,7 @@ final class CountryJournalTest extends TestCase
         $stay1 = new Stay($country, $purpose, new Date('2022-01-01'), new Date('2022-04-01'));
         $stay2 = new Stay($country, $purpose, new Date('2022-03-31'), new Date('2022-06-01'));
 
-        $this->expectException(StayDatesOverlappingException::class);
+        $this->expectException(StaysDatesOverlapsException::class);
 
         new CountryJournal([$stay1, $stay2]);
     }

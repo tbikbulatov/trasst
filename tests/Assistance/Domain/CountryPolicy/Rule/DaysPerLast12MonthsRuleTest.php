@@ -9,7 +9,7 @@ use App\Assistance\Domain\ValueObject\Stay;
 use App\Assistance\Domain\ValueObject\StayPurpose;
 use App\Assistance\Domain\ValueObject\YearOutcome;
 use DateTimeImmutable as Date;
-use InvalidArgumentException;
+use DomainException;
 use PHPUnit\Framework\TestCase;
 use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertFalse;
@@ -42,7 +42,7 @@ final class DaysPerLast12MonthsRuleTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenSetupInvalidAmountOfDaysForResidency(int $days): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(DomainException::class);
 
         new DaysPerLast12MonthsRule($days);
     }

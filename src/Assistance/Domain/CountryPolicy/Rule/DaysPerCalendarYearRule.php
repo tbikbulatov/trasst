@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Assistance\Domain\CountryPolicy\Rule;
 
-use App\Assistance\Domain\ValueObject\TaxResidencyComment as Comment;
 use App\Assistance\Domain\ValueObject\CountryJournal;
+use App\Assistance\Domain\ValueObject\TaxResidencyComment as Comment;
 use App\Assistance\Domain\ValueObject\Year;
 use App\Assistance\Domain\ValueObject\YearOutcome;
 use DateTimeImmutable;
-use InvalidArgumentException;
+use DomainException;
 
 final readonly class DaysPerCalendarYearRule implements CountryTaxResidencyRuleInterface
 {
@@ -20,7 +20,7 @@ final readonly class DaysPerCalendarYearRule implements CountryTaxResidencyRuleI
         public int $daysForResidency,
     ) {
         if ($this->daysForResidency < self::MIN_DAYS || $this->daysForResidency > self::MAX_DAYS) {
-            throw new InvalidArgumentException(sprintf(
+            throw new DomainException(sprintf(
                 'Value must be in range %d - %d', self::MIN_DAYS, self::MAX_DAYS
             ));
         }

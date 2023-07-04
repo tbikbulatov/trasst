@@ -11,7 +11,7 @@ use App\Assistance\Domain\ValueObject\Year;
 use App\Assistance\Domain\ValueObject\YearOutcome;
 use DateInterval;
 use DateTimeInterface;
-use InvalidArgumentException;
+use DomainException;
 
 final readonly class DaysPerLast12MonthsRule implements CountryTaxResidencyRuleInterface
 {
@@ -23,7 +23,7 @@ final readonly class DaysPerLast12MonthsRule implements CountryTaxResidencyRuleI
         public int $daysForResidency,
     ) {
         if ($this->daysForResidency < self::MIN_DAYS || $this->daysForResidency > self::MAX_DAYS) {
-            throw new InvalidArgumentException(sprintf(
+            throw new DomainException(sprintf(
                 'Value must be in range %d - %d', self::MIN_DAYS, self::MAX_DAYS
             ));
         }

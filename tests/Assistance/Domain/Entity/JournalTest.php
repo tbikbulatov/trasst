@@ -3,13 +3,13 @@
 namespace App\Tests\Assistance\Domain\Entity;
 
 use App\Assistance\Domain\Entity\Journal;
-use App\Assistance\Domain\Exception\StayDatesOverlappingException;
+use App\Assistance\Domain\Exception\JournalHaveNoStaysException;
+use App\Assistance\Domain\Exception\JournalStaysDatesOverlapsException;
 use App\Assistance\Domain\ValueObject\CountryCode;
 use App\Assistance\Domain\ValueObject\Stay;
 use App\Assistance\Domain\ValueObject\StayPurpose;
 use App\Assistance\Infrastructure\IdGenerator\JournalIdGenerator;
 use DateTimeImmutable as Date;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 class JournalTest extends TestCase
@@ -25,7 +25,7 @@ class JournalTest extends TestCase
 
     public function testJournalCantBeEmpty()
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(JournalHaveNoStaysException::class);
 
         new Journal($this->journalIdGenerator->generate(), []);
     }
@@ -70,7 +70,7 @@ class JournalTest extends TestCase
         $stay1 = new Stay(CountryCode::ARMENIA, StayPurpose::TOURISM, new Date('2022-01-01'), new Date('2022-04-01'));
         $stay2 = new Stay(CountryCode::TURKEY, StayPurpose::TOURISM, new Date('2022-03-31'), new Date('2022-06-01'));
 
-        $this->expectException(StayDatesOverlappingException::class);
+        $this->expectException(JournalStaysDatesOverlapsException::class);
 
         new Journal($this->journalIdGenerator->generate(), [$stay1, $stay2]);
     }
