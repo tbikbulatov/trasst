@@ -11,9 +11,15 @@ use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\OpenApi\Model\Operation;
+use ApiPlatform\OpenApi\Model\RequestBody;
 use App\Assistance\Application\Common\JournalResult;
+use App\Assistance\Domain\Exception\JournalNotFoundException;
+use App\Assistance\Domain\Exception\JournalValidationException;
 use App\Assistance\Domain\ValueObject\JournalId;
 use App\Assistance\Domain\ValueObject\Stay;
+use App\Assistance\Infrastructure\ApiPlatform\Resource\Output\AnalysisOutcomeOutput;
+use App\Assistance\Infrastructure\ApiPlatform\State\Processor\AnalyzeJournalProcessor;
 use App\Assistance\Infrastructure\ApiPlatform\State\Processor\CreateJournalProcessor;
 use App\Assistance\Infrastructure\ApiPlatform\State\Processor\DeleteJournalProcessor;
 use App\Assistance\Infrastructure\ApiPlatform\State\Provider\JournalItemProvider;
@@ -27,6 +33,22 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Get(provider: JournalItemProvider::class),
         new GetCollection(controller: NotFoundAction::class, output: false, read: false),
         new Post(processor: CreateJournalProcessor::class),
+        new Post(
+            '/journals/{id}/analyze.{_format}',
+            status: 200,
+            openapi: new Operation(
+                summary: 'Analyze a Journal.',
+                description: 'Returns Journal analysis result',
+                requestBody: new RequestBody(),
+            ),
+            normalizationContext: ['skip_null_values' => false],
+            input: false,
+            output: AnalysisOutcomeOutput::class,
+            deserialize: false,
+            validate: false,
+            provider: JournalItemProvider::class,
+            processor: AnalyzeJournalProcessor::class,
+        ),
         new Delete(provider: JournalItemProvider::class, processor: DeleteJournalProcessor::class),
     ],
     normalizationContext: ['groups' => ['read']],
