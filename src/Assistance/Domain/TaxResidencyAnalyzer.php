@@ -13,13 +13,14 @@ final readonly class TaxResidencyAnalyzer
 {
     public function __construct(
         private CountryTaxResidencyPoliciesRegistryInterface $policiesRegistry,
-    ) {}
+    ) {
+    }
 
     public function analyze(Journal $journal): AnalysisOutcome
     {
         $countriesOutcomes = [];
         foreach ($journal->splitByCountries() as $countryJournal) {
-            if (! $this->policiesRegistry->has($countryJournal->country)) {
+            if (!$this->policiesRegistry->has($countryJournal->country)) {
                 $countriesOutcomes[] = new CountryOutcome($countryJournal->country, []);
                 continue;
             }

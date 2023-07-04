@@ -7,11 +7,11 @@ namespace App\Assistance\Domain\Exception;
 use App\Shared\Domain\Exception\ValidationException;
 use DateTimeInterface;
 
-class StaysDatesOverlapsException extends ValidationException
+final class StaysDatesOverlapsException extends ValidationException
 {
-    public static function withDates(DateTimeInterface $date1, DateTimeInterface $date2): static
+    public static function withDates(DateTimeInterface $date1, DateTimeInterface $date2): self
     {
-        return new static(sprintf(
+        return new self(sprintf(
             'Stays dates within interval from %s to %s are overlapping',
             $date1->format('Y-m-d'),
             $date2->format('Y-m-d'),

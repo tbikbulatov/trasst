@@ -10,7 +10,8 @@ use App\Assistance\Domain\ValueObject\Stay;
 trait StayDatesOverlappingValidationTrait
 {
     /**
-     * @param array<Stay> $stays
+     * @param array<int,Stay> $stays
+     *
      * @throws StaysDatesOverlapsException
      */
     private function validateStayDatesOverlapping(array $stays): void
@@ -21,7 +22,7 @@ trait StayDatesOverlappingValidationTrait
                 break;
             }
 
-            $daysDiff = (int)$stay->dateTo->diff($nextStay->dateFrom)->format('%r%a');
+            $daysDiff = (int) $stay->dateTo->diff($nextStay->dateFrom)->format('%r%a');
             if ($daysDiff < 0) {
                 throw StaysDatesOverlapsException::withDates($nextStay->dateFrom, $stay->dateTo);
             }

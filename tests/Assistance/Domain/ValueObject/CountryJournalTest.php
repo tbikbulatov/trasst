@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Assistance\Domain\ValueObject;
 
 use App\Assistance\Domain\Exception\StaysDatesOverlapsException;

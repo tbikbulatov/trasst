@@ -6,7 +6,7 @@ namespace App\Assistance\Application\Command;
 
 use App\Assistance\Domain\JournalRepositoryInterface;
 use App\Assistance\Domain\TaxResidencyAnalyzer;
-use App\Assistance\Infrastructure\ApiPlatform\Resource\Output\AnalysisOutcomeOutput;
+use App\Assistance\Domain\ValueObject\AnalysisOutcome;
 use App\Shared\Application\Command\CommandHandlerInterface;
 
 final readonly class AnalyzeJournalCommandHandler implements CommandHandlerInterface
@@ -17,11 +17,10 @@ final readonly class AnalyzeJournalCommandHandler implements CommandHandlerInter
     ) {
     }
 
-    public function __invoke(AnalyzeJournalCommand $command): AnalysisOutcomeOutput
+    public function __invoke(AnalyzeJournalCommand $command): AnalysisOutcome
     {
         $journal = $this->journalRepository->get($command->id);
-        $outcome = $this->taxResidencyAnalyzer->analyze($journal);
 
-        return AnalysisOutcomeOutput::fromValueObject($outcome);
+        return $this->taxResidencyAnalyzer->analyze($journal);
     }
 }

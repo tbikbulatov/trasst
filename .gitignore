@@ -16,7 +16,13 @@
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
 
-###> phpunit/phpunit ###
-/phpunit.xml
-.phpunit.result.cache
-###< phpunit/phpunit ###
+###> qossmic/deptrac-shim ###
+/.deptrac.cache
+/.deptrac_bc.cache
+/.deptrac_layers.cache
+###< qossmic/deptrac-shim ###
+
+###> friendsofphp/php-cs-fixer ###
+/.php-cs-fixer.php
+/.php-cs-fixer.cache
+###< friendsofphp/php-cs-fixer ###

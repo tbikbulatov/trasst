@@ -33,6 +33,7 @@ final class TaxResidencyAnalyzerTest extends BaseKernelTestCase
 
     /**
      * @param array<string, array<int>> $expectations
+     *
      * @dataProvider analysisOutcomeProvider
      */
     public function testAnalysisOutcomeShouldMatchCountryAndYearOutcomesAmount(
@@ -68,7 +69,7 @@ final class TaxResidencyAnalyzerTest extends BaseKernelTestCase
             ],
             new Journal($journalIdGenerator->generate(), [
                 new Stay($country1, $purpose, new Date('2022-01-01'), new Date('2022-03-31')),
-            ])
+            ]),
         ];
         yield 'within one year in a few country' => [
             [
@@ -82,7 +83,7 @@ final class TaxResidencyAnalyzerTest extends BaseKernelTestCase
                 new Stay($country2, $purpose, new Date('2022-04-01'), new Date('2022-06-30')),
                 new Stay($country3, $purpose, new Date('2022-07-01'), new Date('2022-09-30')),
                 new Stay($country4, $purpose, new Date('2022-10-01'), new Date('2022-12-31')),
-            ])
+            ]),
         ];
         yield 'within few years in one country' => [
             [
@@ -90,15 +91,15 @@ final class TaxResidencyAnalyzerTest extends BaseKernelTestCase
             ],
             new Journal($journalIdGenerator->generate(), [
                 new Stay($country1, $purpose, new Date('2021-01-01'), new Date('2023-12-31')),
-            ])
+            ]),
         ];
         yield 'within few years in one country, edge dates' => [
             [
                 $country1->value => [2021, 2022, 2023],
             ],
             new Journal($journalIdGenerator->generate(), [
-                new Stay($country1, $purpose, new Date('2021-12-31'), new Date('2023-01-01'))
-            ])
+                new Stay($country1, $purpose, new Date('2021-12-31'), new Date('2023-01-01')),
+            ]),
         ];
         yield 'within few years in a few country' => [
             [
@@ -120,7 +121,7 @@ final class TaxResidencyAnalyzerTest extends BaseKernelTestCase
                 new Stay($country4, $purpose, new Date('2021-10-01'), new Date('2021-12-31')),
                 new Stay($country4, $purpose, new Date('2022-10-01'), new Date('2022-12-31')),
                 new Stay($country4, $purpose, new Date('2023-10-01'), new Date('2023-12-31')),
-            ])
+            ]),
         ];
         yield 'within few years in a few country, different years' => [
             [
@@ -138,7 +139,7 @@ final class TaxResidencyAnalyzerTest extends BaseKernelTestCase
                 new Stay($country4, $purpose, new Date('2021-10-01'), new Date('2021-12-31')),
                 new Stay($country4, $purpose, new Date('2022-10-01'), new Date('2022-12-31')),
                 new Stay($country4, $purpose, new Date('2023-10-01'), new Date('2023-12-31')),
-            ])
+            ]),
         ];
     }
 

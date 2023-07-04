@@ -64,7 +64,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 final class JournalResource
 {
     public function __construct(
-        /** The ID of this journal */
         #[Assert\Uuid]
         #[ApiProperty(
             readable: true,
@@ -73,17 +72,18 @@ final class JournalResource
             openapiContext: ['type' => 'string', 'format' => 'uuid']
         )]
         #[Groups(['read'])]
+        /** The ID of this journal */
         public ?JournalId $id = null,
 
-        /** @var StayResource[] $stays Stays */
         #[Assert\NotBlank]
         #[Assert\Type('array')]
         #[Assert\Count(['min' => 1])]
         #[Assert\All([
-            new Assert\Type(StayResource::class)
+            new Assert\Type(StayResource::class),
         ])]
         #[Assert\Valid]
         #[Groups(['read', 'write'])]
+        /** @var array<int,StayResource> $stays Stays */
         public array $stays = [],
     ) {
     }
@@ -99,7 +99,7 @@ final class JournalResource
     {
         return new JournalResource(
             $r->journalId,
-            array_map(fn(Stay $s) => new StayResource($s->country, $s->purpose, $s->dateFrom, $s->dateTo), $r->stays)
+            array_map(fn (Stay $s) => new StayResource($s->country, $s->purpose, $s->dateFrom, $s->dateTo), $r->stays)
         );
     }
 }

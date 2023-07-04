@@ -9,6 +9,7 @@ use App\Shared\Application\Query\QueryInterface;
 use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\HandleTrait;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Throwable;
 
 final class MessengerQueryBus implements QueryBusInterface
 {
@@ -24,7 +25,7 @@ final class MessengerQueryBus implements QueryBusInterface
         try {
             return $this->handle($query);
         } catch (HandlerFailedException $e) {
-            /** @var array{0: \Throwable} $exceptions */
+            /** @var array{0: Throwable} $exceptions */
             $exceptions = $e->getNestedExceptions();
 
             throw $exceptions[0];

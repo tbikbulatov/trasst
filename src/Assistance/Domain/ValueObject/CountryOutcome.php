@@ -10,7 +10,7 @@ final readonly class CountryOutcome implements Countable
 {
     public CountryCode $country;
 
-    /** @var array<YearOutcome> $yearsOutcomes */
+    /** @var array<YearOutcome> */
     public array $yearsOutcomes;
 
     /**
@@ -29,6 +29,7 @@ final readonly class CountryOutcome implements Countable
 
     /**
      * @param array<YearOutcome> $yearsOutcomes
+     *
      * @return array<YearOutcome>
      */
     private function groupByYear(array $yearsOutcomes): array

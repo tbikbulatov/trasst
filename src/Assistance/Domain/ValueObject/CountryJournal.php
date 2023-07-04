@@ -10,7 +10,11 @@ use App\Shared\Domain\Exception\ValidationException;
 use Countable;
 use InvalidArgumentException;
 use Iterator;
+use OutOfRangeException;
 
+/**
+ * @template-implements Iterator<int,Stay>
+ */
 final class CountryJournal implements Countable, Iterator
 {
     use StayDatesOverlappingValidationTrait;
@@ -18,12 +22,13 @@ final class CountryJournal implements Countable, Iterator
     public readonly CountryCode $country;
 
     /**
-     * @var array<Stay>
+     * @var array<int,Stay>
      */
     private array $stays;
 
     /**
-     * @param array<Stay> $stays
+     * @param array<int,Stay> $stays
+     *
      * @throws InvalidArgumentException
      * @throws ValidationException
      * @throws StaysDatesOverlapsException
@@ -49,9 +54,9 @@ final class CountryJournal implements Countable, Iterator
         return count($this->stays);
     }
 
-    public function current(): false|Stay
+    public function current(): Stay
     {
-        return current($this->stays);
+        return $this->valid() ? current($this->stays) : throw new OutOfRangeException();
     }
 
     public function next(): void
@@ -59,14 +64,14 @@ final class CountryJournal implements Countable, Iterator
         next($this->stays);
     }
 
-    public function key(): int|null
+    public function key(): ?int
     {
         return key($this->stays);
     }
 
     public function valid(): bool
     {
-        return (bool)current($this->stays);
+        return (bool) current($this->stays);
     }
 
     public function rewind(): void
@@ -75,20 +80,26 @@ final class CountryJournal implements Countable, Iterator
     }
 
     /**
+     * @param array<int,Stay> $stays
+     *
      * @throws InvalidArgumentException
      */
     private function ensureTypes(array $stays): void
     {
-        array_walk($stays, fn($value) => $value instanceof Stay ?: throw new InvalidArgumentException());
-    }
-
-    private function sort(array &$stays): void
-    {
-        usort($stays, fn(Stay $a, Stay $b) => $a->dateFrom <=> $b->dateFrom);
+        array_walk($stays, fn (mixed $value) => assert($value instanceof Stay));
     }
 
     /**
-     * @param array<Stay> $stays
+     * @param array<int,Stay> &$stays
+     */
+    private function sort(array &$stays): void
+    {
+        usort($stays, fn (Stay $a, Stay $b) => $a->dateFrom <=> $b->dateFrom);
+    }
+
+    /**
+     * @param array<int,Stay> $stays
+     *
      * @throws ValidationException
      * @throws StaysDatesOverlapsException
      */

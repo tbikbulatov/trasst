@@ -16,8 +16,7 @@ final class CountryTaxPolicyMother
      */
     public static function create(array $rules, ?CountryCode $countryCode = null): CountryTaxResidencyPolicyInterface
     {
-        return new class($rules, $countryCode) extends AbstractTaxResidencyPolicy
-        {
+        return new class($rules, $countryCode) extends AbstractTaxResidencyPolicy {
             private static CountryCode $countryCode;
 
             public function __construct(array $rules, ?CountryCode $countryCode = null)

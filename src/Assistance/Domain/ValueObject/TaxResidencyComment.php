@@ -11,7 +11,8 @@ final readonly class TaxResidencyComment implements Stringable
     public function __construct(
         /** @var array<string> $comments */
         public array $comments,
-    ) {}
+    ) {
+    }
 
     public static function single(string $comment): self
     {

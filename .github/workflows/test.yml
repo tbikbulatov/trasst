@@ -1,0 +1,138 @@
+name: test
+
+on:
+    push:
+    pull_request:
+
+jobs:
+    php-cs-fixer:
+        runs-on: ubuntu-latest
+        name: PHP-CS-Fixer
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: '8.2'
+                  tools: php-cs-fixer, cs2pr
+
+            - name: Run PHP-CS-Fixer
+              run: php-cs-fixer fix --dry-run --format checkstyle | cs2pr
+
+    psalm:
+        runs-on: ubuntu-latest
+        name: Psalm
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v3
+
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: '8.2'
+
+            - name: Determine composer cache directory
+              id: composercache
+              run: echo "COMPOSER_CACHE_DIR=$(composer config cache-dir)" >> $GITHUB_ENV
+
+            - name: Cache dependencies installed with composer
+              uses: actions/cache@v3
+              with:
+                  path: ${{ env.COMPOSER_CACHE_DIR }}
+                  key: ${{ runner.os }}-composer-${{ hashFiles('composer.json') }}
+                  restore-keys: ${{ runner.os }}-composer-
+
+            - name: Install dependencies
+              run: composer install --prefer-dist
+
+            - name: Run Psalm
+              run: vendor/bin/psalm --show-info=true --output-format=github
+
+    deptrac_bc:
+        runs-on: ubuntu-latest
+        name: Deptrac bounded contexts
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v3
+
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: '8.2'
+
+            - name: Determine composer cache directory
+              id: composercache
+              run: echo "COMPOSER_CACHE_DIR=$(composer config cache-dir)" >> $GITHUB_ENV
+
+            - name: Cache dependencies installed with composer
+              uses: actions/cache@v3
+              with:
+                  path: ${{ env.COMPOSER_CACHE_DIR }}
+                  key: ${{ runner.os }}-composer-${{ hashFiles('composer.json') }}
+                  restore-keys: ${{ runner.os }}-composer-
+
+            - name: Install dependencies
+              run: composer install --prefer-dist
+
+            - name: Run Deptrac
+              run: vendor/bin/deptrac analyze --fail-on-uncovered --report-uncovered --no-progress --config-file deptrac_bc.yaml
+
+    deptrac_layers:
+        runs-on: ubuntu-latest
+        name: Deptrac hexagonal
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v3
+
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: '8.2'
+
+            - name: Determine composer cache directory
+              id: composercache
+              run: echo "COMPOSER_CACHE_DIR=$(composer config cache-dir)" >> $GITHUB_ENV
+
+            - name: Cache dependencies installed with composer
+              uses: actions/cache@v3
+              with:
+                  path: ${{ env.COMPOSER_CACHE_DIR }}
+                  key: ${{ runner.os }}-composer-${{ hashFiles('composer.json') }}
+                  restore-keys: ${{ runner.os }}-composer-
+
+            - name: Install dependencies
+              run: composer install --prefer-dist
+
+            - name: Run Deptrac
+              run: vendor/bin/deptrac analyze --fail-on-uncovered --report-uncovered --no-progress --config-file deptrac_layers.yaml
+
+    phpunit:
+        name: PHPUnit
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: '8.2'
+
+            - name: Determine composer cache directory
+              id: composercache
+              run: echo "COMPOSER_CACHE_DIR=$(composer config cache-dir)" >> $GITHUB_ENV
+
+            - name: Cache dependencies installed with composer
+              uses: actions/cache@v3
+              with:
+                  path: ${{ env.COMPOSER_CACHE_DIR }}
+                  key: ${{ runner.os }}-composer-${{ hashFiles('composer.json') }}
+                  restore-keys: ${{ runner.os }}-composer-
+
+            - name: Install dependencies
+              run: composer install --prefer-dist
+
+            - name: Run PHPUnit tests
+              run: bin/phpunit

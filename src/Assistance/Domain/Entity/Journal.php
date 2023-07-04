@@ -14,7 +14,11 @@ use App\Assistance\Domain\ValueObject\Stay;
 use Countable;
 use InvalidArgumentException;
 use Iterator;
+use OutOfRangeException;
 
+/**
+ * @template-implements Iterator<int,Stay>
+ */
 class Journal implements Countable, Iterator
 {
     use StayDatesOverlappingValidationTrait;
@@ -22,12 +26,13 @@ class Journal implements Countable, Iterator
     private readonly JournalId $id;
 
     /**
-     * @var array<Stay>
+     * @var array<int,Stay>
      */
     private array $stays;
 
     /**
-     * @param array<Stay> $stays
+     * @param array<int,Stay> $stays
+     *
      * @throws InvalidArgumentException
      * @throws JournalHaveNoStaysException
      * @throws JournalStaysDatesOverlapsException
@@ -49,7 +54,7 @@ class Journal implements Countable, Iterator
     }
 
     /**
-     * @return array<Stay>
+     * @return array<int,Stay>
      */
     public function getStays(): array
     {
@@ -81,9 +86,9 @@ class Journal implements Countable, Iterator
         return count($this->stays);
     }
 
-    public function current(): false|Stay
+    public function current(): Stay
     {
-        return current($this->stays);
+        return $this->valid() ? current($this->stays) : throw new OutOfRangeException();
     }
 
     public function next(): void
@@ -91,14 +96,14 @@ class Journal implements Countable, Iterator
         next($this->stays);
     }
 
-    public function key(): int|null
+    public function key(): ?int
     {
         return key($this->stays);
     }
 
     public function valid(): bool
     {
-        return (bool)current($this->stays);
+        return (bool) current($this->stays);
     }
 
     public function rewind(): void
@@ -107,20 +112,26 @@ class Journal implements Countable, Iterator
     }
 
     /**
+     * @param array<int,Stay> $stays
+     *
      * @throws InvalidArgumentException
      */
     private function ensureTypes(array $stays): void
     {
-        array_walk($stays, fn($value) => $value instanceof Stay ?: throw new InvalidArgumentException());
-    }
-
-    private function sort(array &$stays): void
-    {
-        usort($stays, fn(Stay $a, Stay $b) => $a->dateFrom <=> $b->dateFrom);
+        array_walk($stays, fn (mixed $value) => assert($value instanceof Stay));
     }
 
     /**
-     * @param array<Stay> $stays
+     * @param array<int,Stay> &$stays
+     */
+    private function sort(array &$stays): void
+    {
+        usort($stays, fn (Stay $a, Stay $b) => $a->dateFrom <=> $b->dateFrom);
+    }
+
+    /**
+     * @param array<int,Stay> $stays
+     *
      * @throws JournalHaveNoStaysException
      * @throws JournalStaysDatesOverlapsException
      */

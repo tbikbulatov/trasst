@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Assistance\Domain\ValueObject;
 
 use App\Assistance\Domain\ValueObject\CountryCode;
@@ -37,5 +39,4 @@ class StayTest extends TestCase
         self::assertEquals($swappedDateFrom, $sut->dateTo);
         self::assertEquals($swappedDateTo, $sut->dateFrom);
     }
-
 }

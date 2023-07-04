@@ -82,10 +82,13 @@
         }
     },
     "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.21",
         "phpunit/phpunit": "^9.5",
+        "qossmic/deptrac-shim": "^1.0",
         "roave/security-advisories": "dev-latest",
         "symfony/browser-kit": "6.3.*",
         "symfony/css-selector": "6.3.*",
-        "symfony/phpunit-bridge": "^6.3"
+        "symfony/phpunit-bridge": "^6.3",
+        "vimeo/psalm": "^5.13"
     }
 }

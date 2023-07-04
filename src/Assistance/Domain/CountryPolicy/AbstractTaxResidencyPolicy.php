@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace App\Assistance\Domain\CountryPolicy;
 
 use App\Assistance\Domain\CountryPolicy\Rule\CountryTaxResidencyRuleInterface;
+use OutOfRangeException;
 
 abstract class AbstractTaxResidencyPolicy implements CountryTaxResidencyPolicyInterface
 {
     /**
-     * @var array<CountryTaxResidencyRuleInterface> $rules
+     * @var array<int,CountryTaxResidencyRuleInterface>
      */
     protected array $rules;
 
@@ -23,9 +24,9 @@ abstract class AbstractTaxResidencyPolicy implements CountryTaxResidencyPolicyIn
         return $this->rules;
     }
 
-    public function current(): false|CountryTaxResidencyRuleInterface
+    public function current(): CountryTaxResidencyRuleInterface
     {
-        return current($this->rules);
+        return $this->valid() ? current($this->rules) : throw new OutOfRangeException();
     }
 
     public function next(): void
@@ -33,7 +34,7 @@ abstract class AbstractTaxResidencyPolicy implements CountryTaxResidencyPolicyIn
         next($this->rules);
     }
 
-    public function key(): int|null
+    public function key(): ?int
     {
         return key($this->rules);
     }

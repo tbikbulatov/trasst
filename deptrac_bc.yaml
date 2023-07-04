@@ -1,0 +1,25 @@
+parameters:
+    paths:
+        - ./src
+
+    layers:
+        - name: Assistance
+          collectors:
+              - type: directory
+                regex: src/Assistance/.*
+
+        - name: Shared
+          collectors:
+              - type: directory
+                regex: src/Shared/.*
+
+        - name: Vendors
+          collectors:
+              - { type: className, regex: ^ApiPlatform\\ }
+              - { type: className, regex: ^Doctrine\\ }
+              - { type: className, regex: ^Psr\\ }
+              - { type: className, regex: ^Symfony\\ }
+
+    ruleset:
+        Assistance: [ Shared, Vendors ]
+        Shared: [ Vendors ]

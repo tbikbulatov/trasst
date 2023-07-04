@@ -20,7 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource(
     shortName: 'Stay',
     operations: [
-        new Get(controller: NotFoundAction::class)
+        new Get(controller: NotFoundAction::class),
     ],
 )]
 final readonly class StayResource

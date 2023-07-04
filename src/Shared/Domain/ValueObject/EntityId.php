@@ -10,7 +10,8 @@ abstract readonly class EntityId implements Stringable
 {
     public function __construct(
         public string $value,
-    ) {}
+    ) {
+    }
 
     public function equals(self $anotherId): bool
     {

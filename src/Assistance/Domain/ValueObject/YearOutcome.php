@@ -4,39 +4,51 @@ declare(strict_types=1);
 
 namespace App\Assistance\Domain\ValueObject;
 
-use InvalidArgumentException;
-
 final readonly class YearOutcome
 {
-    public function __construct(
+    private function __construct(
         public Year $year,
         public bool $isResident,
         public ?TaxResidencyComment $residencyComment = null,
         public ?bool $canBecomeResident = null,
         public ?TaxResidencyComment $potentialResidencyComment = null,
-    ) {}
+    ) {
+    }
+
+    public static function resident(Year $year, TaxResidencyComment $residencyComment): self
+    {
+        return new self($year, true, $residencyComment);
+    }
+
+    public static function notResident(Year $year): self
+    {
+        return new self($year, false);
+    }
 
     public static function emptyForYear(Year $year): self
     {
         return new self($year, false);
     }
 
-    /**
-     * @throws InvalidArgumentException
-     */
     public function sumUp(self $yearOutcome): self
     {
-        $this->year->equals($yearOutcome->year) ?? throw new InvalidArgumentException('Years does not match');
+        assert($this->year->equals($yearOutcome->year), 'Years does not match');
 
-        return new self(
-            $this->year,
-            $this->isResident || $yearOutcome->isResident,
-            $yearOutcome->isResident ? $this->concatComments($yearOutcome->residencyComment) : $this->residencyComment,
-        );
+        $isResident = $this->isResident || $yearOutcome->isResident;
+
+        return new self($this->year, $isResident, $this->concatComments($yearOutcome->residencyComment));
     }
 
-    private function concatComments(TaxResidencyComment $comment): TaxResidencyComment
+    private function concatComments(?TaxResidencyComment $comment): ?TaxResidencyComment
     {
-        return $this->residencyComment ? $this->residencyComment->concat($comment) : $comment;
+        if (!$this->residencyComment && !$comment) {
+            return null;
+        }
+
+        if ($this->residencyComment && $comment) {
+            return $this->residencyComment->concat($comment);
+        }
+
+        return $this->residencyComment ?? $comment;
     }
 }

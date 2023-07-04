@@ -8,6 +8,6 @@ final class JournalStaysDatesOverlapsException extends JournalValidationExceptio
 {
     public static function fromPrevious(StaysDatesOverlapsException $exception): self
     {
-        return new self(self::MESSAGE_PREFIX . ': ' . $exception->getMessage());
+        return new self(self::MESSAGE_PREFIX.': '.$exception->getMessage());
     }
 }

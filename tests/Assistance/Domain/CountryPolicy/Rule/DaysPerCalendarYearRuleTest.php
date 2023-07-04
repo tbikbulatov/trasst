@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Assistance\Domain\CountryPolicy\Rule;
 
 use App\Assistance\Domain\CountryPolicy\Rule\DaysPerCalendarYearRule;
@@ -11,6 +13,7 @@ use App\Assistance\Domain\ValueObject\YearOutcome;
 use DateTimeImmutable as Date;
 use DomainException;
 use PHPUnit\Framework\TestCase;
+
 use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertFalse;
@@ -101,9 +104,9 @@ final class DaysPerCalendarYearRuleTest extends TestCase
         $country = CountryCode::any();
         $purpose = StayPurpose::TOURISM;
         $journal = new CountryJournal([
-            new Stay($country, $purpose, new Date('2021-01-01'), new Date('2021-03-31')),//90d
-            new Stay($country, $purpose, new Date('2021-06-01'), new Date('2021-06-30')),//30d
-            new Stay($country, $purpose, new Date('2021-12-01'), new Date('2021-12-31')),//31d
+            new Stay($country, $purpose, new Date('2021-01-01'), new Date('2021-03-31')), // 90d
+            new Stay($country, $purpose, new Date('2021-06-01'), new Date('2021-06-30')), // 30d
+            new Stay($country, $purpose, new Date('2021-12-01'), new Date('2021-12-31')), // 31d
         ]);
         $sut = new DaysPerCalendarYearRule(183);
 
@@ -134,13 +137,13 @@ final class DaysPerCalendarYearRuleTest extends TestCase
         $country = CountryCode::any();
         $purpose = StayPurpose::TOURISM;
         $journal = new CountryJournal([
-            new Stay($country, $purpose, new Date('2019-01-01'), new Date('2019-04-01')),//91d
-            new Stay($country, $purpose, new Date('2019-04-03'), new Date('2019-07-01')),//90d
-            new Stay($country, $purpose, new Date('2020-07-03'), new Date('2020-09-01')),//61d
-            new Stay($country, $purpose, new Date('2020-09-02'), new Date('2020-11-30')),//90d
-            new Stay($country, $purpose, new Date('2021-04-10'), new Date('2021-10-08')),//182d
-            new Stay($country, $purpose, new Date('2022-10-01'), new Date('2022-12-31')),//92d
-            new Stay($country, $purpose, new Date('2023-01-01'), new Date('2023-05-31')),//151d
+            new Stay($country, $purpose, new Date('2019-01-01'), new Date('2019-04-01')), // 91d
+            new Stay($country, $purpose, new Date('2019-04-03'), new Date('2019-07-01')), // 90d
+            new Stay($country, $purpose, new Date('2020-07-03'), new Date('2020-09-01')), // 61d
+            new Stay($country, $purpose, new Date('2020-09-02'), new Date('2020-11-30')), // 90d
+            new Stay($country, $purpose, new Date('2021-04-10'), new Date('2021-10-08')), // 182d
+            new Stay($country, $purpose, new Date('2022-10-01'), new Date('2022-12-31')), // 92d
+            new Stay($country, $purpose, new Date('2023-01-01'), new Date('2023-05-31')), // 151d
         ]);
         $sut = new DaysPerCalendarYearRule(183);
 
@@ -191,9 +194,9 @@ final class DaysPerCalendarYearRuleTest extends TestCase
         $country = CountryCode::any();
         $purpose = StayPurpose::TOURISM;
         $journal = new CountryJournal([
-            new Stay($country, $purpose, new Date('2021-01-01'), new Date('2021-03-31')),//90d
-            new Stay($country, $purpose, new Date('2021-06-01'), new Date('2021-06-30')),//30d
-            new Stay($country, $purpose, new Date('2021-08-01'), new Date('2021-12-31')),//152d
+            new Stay($country, $purpose, new Date('2021-01-01'), new Date('2021-03-31')), // 90d
+            new Stay($country, $purpose, new Date('2021-06-01'), new Date('2021-06-30')), // 30d
+            new Stay($country, $purpose, new Date('2021-08-01'), new Date('2021-12-31')), // 152d
         ]);
         $sut = new DaysPerCalendarYearRule(183);
 
@@ -238,13 +241,13 @@ final class DaysPerCalendarYearRuleTest extends TestCase
         $country = CountryCode::any();
         $purpose = StayPurpose::TOURISM;
         $journal = new CountryJournal([
-            new Stay($country, $purpose, new Date('2019-09-01'), new Date('2019-09-30')),//30d
-            new Stay($country, $purpose, new Date('2019-11-01'), new Date('2019-12-31')),//61d
-            new Stay($country, $purpose, new Date('2020-01-01'), new Date('2020-09-01')),//245d
-            new Stay($country, $purpose, new Date('2020-09-02'), new Date('2020-11-30')),//90d
-            new Stay($country, $purpose, new Date('2021-04-10'), new Date('2021-12-31')),//266d
-            new Stay($country, $purpose, new Date('2022-04-10'), new Date('2022-12-31')),//266d
-            new Stay($country, $purpose, new Date('2023-01-01'), new Date('2023-04-30')),//120d
+            new Stay($country, $purpose, new Date('2019-09-01'), new Date('2019-09-30')), // 30d
+            new Stay($country, $purpose, new Date('2019-11-01'), new Date('2019-12-31')), // 61d
+            new Stay($country, $purpose, new Date('2020-01-01'), new Date('2020-09-01')), // 245d
+            new Stay($country, $purpose, new Date('2020-09-02'), new Date('2020-11-30')), // 90d
+            new Stay($country, $purpose, new Date('2021-04-10'), new Date('2021-12-31')), // 266d
+            new Stay($country, $purpose, new Date('2022-04-10'), new Date('2022-12-31')), // 266d
+            new Stay($country, $purpose, new Date('2023-01-01'), new Date('2023-04-30')), // 120d
         ]);
         $sut = new DaysPerCalendarYearRule(183);
 
@@ -260,10 +263,11 @@ final class DaysPerCalendarYearRuleTest extends TestCase
 
     /**
      * @param array<YearOutcome> $outcomes
+     *
      * @return array<int>
      */
     private function extractYears(array $outcomes): array
     {
-        return array_values(array_map(static fn(YearOutcome $o) => $o->year->toInt(), $outcomes));
+        return array_values(array_map(static fn (YearOutcome $o) => $o->year->toInt(), $outcomes));
     }
 }

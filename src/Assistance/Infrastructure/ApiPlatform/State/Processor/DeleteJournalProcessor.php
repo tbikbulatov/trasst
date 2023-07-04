@@ -18,11 +18,13 @@ final readonly class DeleteJournalProcessor implements ProcessorInterface
     }
 
     /**
-     * @param JournalResource $data
+     * @param array<string,mixed> $uriVariables
+     * @param array<string,mixed> $context
      */
-    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = [])
+    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): void
     {
         assert($data instanceof JournalResource);
+        assert(isset($data->id));
 
         $this->commandBus->dispatch(new DeleteJournalCommand($data->id));
     }

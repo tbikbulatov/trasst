@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Assistance\Domain\CountryPolicy\Rule;
 
 use App\Assistance\Domain\CountryPolicy\Rule\DaysPerLast12MonthsRule;
@@ -11,6 +13,7 @@ use App\Assistance\Domain\ValueObject\YearOutcome;
 use DateTimeImmutable as Date;
 use DomainException;
 use PHPUnit\Framework\TestCase;
+
 use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertFalse;
 use function PHPUnit\Framework\assertTrue;
@@ -100,12 +103,12 @@ final class DaysPerLast12MonthsRuleTest extends TestCase
         $country = CountryCode::any();
         $purpose = StayPurpose::TOURISM;
         $journal = new CountryJournal([
-            new Stay($country, $purpose, new Date('2021-11-01'), new Date('2021-11-30')),//30d
-            new Stay($country, $purpose, new Date('2021-12-01'), new Date('2021-12-31')),//31d
-            new Stay($country, $purpose, new Date('2022-04-01'), new Date('2022-04-30')),//30d
-            new Stay($country, $purpose, new Date('2022-06-01'), new Date('2022-06-30')),//30d
-            new Stay($country, $purpose, new Date('2022-08-01'), new Date('2022-08-31')),//31d
-            new Stay($country, $purpose, new Date('2022-10-01'), new Date('2022-10-30')),//30d
+            new Stay($country, $purpose, new Date('2021-11-01'), new Date('2021-11-30')), // 30d
+            new Stay($country, $purpose, new Date('2021-12-01'), new Date('2021-12-31')), // 31d
+            new Stay($country, $purpose, new Date('2022-04-01'), new Date('2022-04-30')), // 30d
+            new Stay($country, $purpose, new Date('2022-06-01'), new Date('2022-06-30')), // 30d
+            new Stay($country, $purpose, new Date('2022-08-01'), new Date('2022-08-31')), // 31d
+            new Stay($country, $purpose, new Date('2022-10-01'), new Date('2022-10-30')), // 30d
         ]);
         $sut = new DaysPerLast12MonthsRule(183);
 
@@ -154,9 +157,9 @@ final class DaysPerLast12MonthsRuleTest extends TestCase
         $country = CountryCode::any();
         $purpose = StayPurpose::TOURISM;
         $journal = new CountryJournal([
-            new Stay($country, $purpose, new Date('2021-01-01'), new Date('2021-03-31')),//90d
-            new Stay($country, $purpose, new Date('2021-06-01'), new Date('2021-06-30')),//30d
-            new Stay($country, $purpose, new Date('2021-08-01'), new Date('2021-12-31')),//153d
+            new Stay($country, $purpose, new Date('2021-01-01'), new Date('2021-03-31')), // 90d
+            new Stay($country, $purpose, new Date('2021-06-01'), new Date('2021-06-30')), // 30d
+            new Stay($country, $purpose, new Date('2021-08-01'), new Date('2021-12-31')), // 153d
         ]);
         $sut = new DaysPerLast12MonthsRule(183);
 
@@ -201,8 +204,8 @@ final class DaysPerLast12MonthsRuleTest extends TestCase
         $country = CountryCode::any();
         $purpose = StayPurpose::TOURISM;
         $journal = new CountryJournal([
-            new Stay($country, $purpose, new Date('2019-01-01'), new Date('2019-03-03')),//62d
-            new Stay($country, $purpose, new Date('2020-03-01'), new Date('2020-03-01')),//1d
+            new Stay($country, $purpose, new Date('2019-01-01'), new Date('2019-03-03')), // 62d
+            new Stay($country, $purpose, new Date('2020-03-01'), new Date('2020-03-01')), // 1d
         ]);
         $sut = new DaysPerLast12MonthsRule(4);
 
@@ -218,8 +221,8 @@ final class DaysPerLast12MonthsRuleTest extends TestCase
         $country = CountryCode::any();
         $purpose = StayPurpose::TOURISM;
         $journal = new CountryJournal([
-            new Stay($country, $purpose, new Date('2019-01-01'), new Date('2019-03-02')),//6d
-            new Stay($country, $purpose, new Date('2020-03-01'), new Date('2020-03-01')),//1d
+            new Stay($country, $purpose, new Date('2019-01-01'), new Date('2019-03-02')), // 6d
+            new Stay($country, $purpose, new Date('2020-03-01'), new Date('2020-03-01')), // 1d
         ]);
         $sut = new DaysPerLast12MonthsRule(4);
 
@@ -235,11 +238,11 @@ final class DaysPerLast12MonthsRuleTest extends TestCase
         $country = CountryCode::any();
         $purpose = StayPurpose::TOURISM;
         $journal = new CountryJournal([
-            new Stay($country, $purpose, new Date('2019-04-01'), new Date('2019-04-03')),//3d
-            new Stay($country, $purpose, new Date('2020-03-01'), new Date('2020-03-01')),//1d
-            new Stay($country, $purpose, new Date('2021-02-01'), new Date('2021-02-03')),//3d
-            new Stay($country, $purpose, new Date('2022-01-01'), new Date('2022-01-02')),//2d
-            new Stay($country, $purpose, new Date('2023-05-01'), new Date('2023-05-01')),//1d
+            new Stay($country, $purpose, new Date('2019-04-01'), new Date('2019-04-03')), // 3d
+            new Stay($country, $purpose, new Date('2020-03-01'), new Date('2020-03-01')), // 1d
+            new Stay($country, $purpose, new Date('2021-02-01'), new Date('2021-02-03')), // 3d
+            new Stay($country, $purpose, new Date('2022-01-01'), new Date('2022-01-02')), // 2d
+            new Stay($country, $purpose, new Date('2023-05-01'), new Date('2023-05-01')), // 1d
         ]);
         $sut = new DaysPerLast12MonthsRule(4);
 
@@ -255,10 +258,11 @@ final class DaysPerLast12MonthsRuleTest extends TestCase
 
     /**
      * @param array<YearOutcome> $outcomes
+     *
      * @return array<int>
      */
     private function extractYears(array $outcomes): array
     {
-        return array_values(array_map(static fn(YearOutcome $o) => $o->year->toInt(), $outcomes));
+        return array_values(array_map(static fn (YearOutcome $o) => $o->year->toInt(), $outcomes));
     }
 }

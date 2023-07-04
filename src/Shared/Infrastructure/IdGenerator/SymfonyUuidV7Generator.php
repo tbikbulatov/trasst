@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\IdGenerator;
+
 use Symfony\Component\Uid\Uuid;
 
 class SymfonyUuidV7Generator

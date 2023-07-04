@@ -10,7 +10,7 @@ use App\Shared\Application\Command\CommandInterface;
 final readonly class CreateJournalCommand implements CommandInterface
 {
     public function __construct(
-        /** @var array<Stay> $stays */
+        /** @var array<int,Stay> $stays */
         public array $stays,
     ) {
     }

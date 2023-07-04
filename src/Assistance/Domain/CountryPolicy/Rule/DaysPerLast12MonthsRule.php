@@ -10,7 +10,7 @@ use App\Assistance\Domain\ValueObject\TaxResidencyComment;
 use App\Assistance\Domain\ValueObject\Year;
 use App\Assistance\Domain\ValueObject\YearOutcome;
 use DateInterval;
-use DateTimeInterface;
+use DateTimeImmutable;
 use DomainException;
 
 final readonly class DaysPerLast12MonthsRule implements CountryTaxResidencyRuleInterface
@@ -23,9 +23,7 @@ final readonly class DaysPerLast12MonthsRule implements CountryTaxResidencyRuleI
         public int $daysForResidency,
     ) {
         if ($this->daysForResidency < self::MIN_DAYS || $this->daysForResidency > self::MAX_DAYS) {
-            throw new DomainException(sprintf(
-                'Value must be in range %d - %d', self::MIN_DAYS, self::MAX_DAYS
-            ));
+            throw new DomainException(sprintf('Value must be in range %d - %d', self::MIN_DAYS, self::MAX_DAYS));
         }
     }
 
@@ -45,13 +43,13 @@ final readonly class DaysPerLast12MonthsRule implements CountryTaxResidencyRuleI
             for (
                 $dateFrom = $stay->dateFrom, $daysCounted = 1; // amount of processed days in the current Stay
                 $dateFrom <= $stay->dateTo;
-                $dateFrom = $dateFrom->modify('+1 day'), $daysCounted = $dateFrom->diff($stay->dateFrom)->days + 1
+                $dateFrom = $dateFrom->modify('+1 day'), $daysCounted = (int) $dateFrom->diff($stay->dateFrom)->days + 1
             ) {
                 $year = (int) $dateFrom->format('Y');
-                $outcomes[$year] ??= $this->createYearOutcome($dateFrom, false);
+                $outcomes[$year] ??= YearOutcome::notResident(Year::fromInt($year));
 
                 if ($this->isEnoughDaysForResidency($dateFrom, $processedStays, $daysCounted)) {
-                    $outcomes[$year] = $this->createYearOutcome($dateFrom, true);
+                    $outcomes[$year] = YearOutcome::resident(Year::fromInt($year), TaxResidencyComment::single($this->getDescription()));
                     $dateFrom = $dateFrom->modify('31 December');
                 }
             }
@@ -64,7 +62,7 @@ final readonly class DaysPerLast12MonthsRule implements CountryTaxResidencyRuleI
     /**
      * @param array<Stay> $previousStays
      */
-    private function isEnoughDaysForResidency(DateTimeInterface $dateFrom, array $previousStays, int $currentStayDays): bool
+    private function isEnoughDaysForResidency(DateTimeImmutable $dateFrom, array $previousStays, int $currentStayDays): bool
     {
         if ($currentStayDays >= $this->daysForResidency) {
             return true;
@@ -76,18 +74,9 @@ final readonly class DaysPerLast12MonthsRule implements CountryTaxResidencyRuleI
             && $stay->dateTo >= $edgeDate
             && $currentStayDays < $this->daysForResidency
         ) {
-            $currentStayDays += $stay->dateFrom >= $edgeDate ? $stay->count() : $stay->dateTo->diff($edgeDate)->days + 1;
+            $currentStayDays += $stay->dateFrom >= $edgeDate ? $stay->count() : (int) $stay->dateTo->diff($edgeDate)->days + 1;
         }
 
         return $currentStayDays >= $this->daysForResidency;
-    }
-
-    private function createYearOutcome(DateTimeInterface $date, bool $isResident): YearOutcome
-    {
-        return new YearOutcome(
-            Year::fromInt((int) $date->format('Y')),
-            $isResident,
-            TaxResidencyComment::single($this->getDescription())
-        );
     }
 }

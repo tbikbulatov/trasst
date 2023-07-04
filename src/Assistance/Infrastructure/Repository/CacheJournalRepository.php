@@ -9,14 +9,21 @@ use App\Assistance\Domain\Exception\JournalNotFoundException;
 use App\Assistance\Domain\JournalRepositoryInterface;
 use App\Assistance\Domain\ValueObject\JournalId;
 use Psr\Cache\CacheItemInterface;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 
 final readonly class CacheJournalRepository implements JournalRepositoryInterface
 {
     public function __construct(
+        /** @var CacheInterface&CacheItemPoolInterface $journalCache */
         private CacheInterface $journalCache,
-    ) {}
+    ) {
+    }
 
+    /**
+     * @psalm-suppress MixedInferredReturnType
+     * @psalm-suppress MixedReturnStatement
+     */
     public function get(JournalId $id): Journal
     {
         /** @var CacheItemInterface $cacheItem */
@@ -28,6 +35,10 @@ final readonly class CacheJournalRepository implements JournalRepositoryInterfac
         return $cacheItem->get();
     }
 
+    /**
+     * @psalm-suppress MixedInferredReturnType
+     * @psalm-suppress MixedReturnStatement
+     */
     public function findOne(JournalId $id): ?Journal
     {
         return $this->journalCache->getItem($id->value)->get();
@@ -40,9 +51,10 @@ final readonly class CacheJournalRepository implements JournalRepositoryInterfac
 
     public function save(Journal $journal): void
     {
-        $item = $this->journalCache->getItem($journal->getId()->value);
-        $item->set($journal);
+        /** @var CacheItemInterface $cacheItem */
+        $cacheItem = $this->journalCache->getItem($journal->getId()->value);
+        $cacheItem->set($journal);
 
-        $this->journalCache->save($item);
+        $this->journalCache->save($cacheItem);
     }
 }

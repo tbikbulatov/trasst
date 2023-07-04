@@ -20,9 +20,7 @@ final readonly class DaysPerCalendarYearRule implements CountryTaxResidencyRuleI
         public int $daysForResidency,
     ) {
         if ($this->daysForResidency < self::MIN_DAYS || $this->daysForResidency > self::MAX_DAYS) {
-            throw new DomainException(sprintf(
-                'Value must be in range %d - %d', self::MIN_DAYS, self::MAX_DAYS
-            ));
+            throw new DomainException(sprintf('Value must be in range %d - %d', self::MIN_DAYS, self::MAX_DAYS));
         }
     }
 
@@ -44,17 +42,18 @@ final readonly class DaysPerCalendarYearRule implements CountryTaxResidencyRuleI
                 $year++, $dateFrom = new DateTimeImmutable("{$year}-01-01")
             ) {
                 $daysInYears[$year] ??= 0;
-                $daysInYears[$year] += (new DateTimeImmutable("{$year}-12-31"))->diff($dateFrom)->days + 1;
+                $daysInYears[$year] += (int) (new DateTimeImmutable("{$year}-12-31"))->diff($dateFrom)->days + 1;
             }
 
             $daysInYears[$yearTo] ??= 0;
-            $daysInYears[$yearTo] += $stay->dateTo->diff($dateFrom)->days + 1;
+            $daysInYears[$yearTo] += (int) $stay->dateTo->diff($dateFrom)->days + 1;
         }
 
         $outcomes = [];
         foreach ($daysInYears as $year => $days) {
-            $isResident = $days >= $this->daysForResidency;
-            $outcomes[$year] = new YearOutcome(Year::fromInt($year), $isResident, Comment::single($this->getDescription()));
+            $outcomes[$year] = $days >= $this->daysForResidency
+                ? YearOutcome::resident(Year::fromInt($year), Comment::single($this->getDescription()))
+                : YearOutcome::notResident(Year::fromInt($year));
         }
 
         return $outcomes;

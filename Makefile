@@ -36,16 +36,11 @@ Project:
 php:
 	@$(EXEC) sh
 
-## Enter the database container
-database:
-	@$(DC) exec database psql -Usymfony app
-
 ## Install the whole dev environment
 install:
 	@$(DC) build
 	@$(MAKE) start -s
 	@$(MAKE) vendor -s
-	@$(MAKE) db-reset -s
 
 ## Install composer dependencies
 vendor:
@@ -61,23 +56,6 @@ stop:
 	@$(DC) rm -v --force
 
 .PHONY: php database install vendor start stop
-
-#################################
-Database:
-
-## Create/Recreate the database
-db-create:
-	@$(EXEC) bin/console doctrine:database:drop --force --if-exists -nq
-	@$(EXEC) bin/console doctrine:database:create -nq
-
-## Update database schema
-db-update:
-	@$(EXEC) bin/console doctrine:schema:update --force -nq
-
-## Reset database
-db-reset: db-create db-update
-
-.PHONY: db-create db-update db-reset
 
 #################################
 Tests:
@@ -96,7 +74,7 @@ deptrac:
 	@$(EXEC) vendor/bin/deptrac analyze --fail-on-uncovered --report-uncovered --no-progress --cache-file .deptrac_bc.cache --config-file deptrac_bc.yaml
 
 	@echo "\n${YELLOW}Checking Hexagonal layers...${RESET}"
-	@$(EXEC) vendor/bin/deptrac analyze --fail-on-uncovered --report-uncovered --no-progress --cache-file .deptrac_hexa.cache --config-file deptrac_hexa.yaml
+	@$(EXEC) vendor/bin/deptrac analyze --fail-on-uncovered --report-uncovered --no-progress --cache-file .deptrac_layers.cache --config-file deptrac_layers.yaml
 
 ## Run phpunit tests
 phpunit:

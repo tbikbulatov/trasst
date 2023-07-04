@@ -11,8 +11,14 @@ use Symfony\Component\DependencyInjection\ServiceLocator;
 
 final class CountryTaxResidencyPoliciesRegistry implements CountryTaxResidencyPoliciesRegistryInterface
 {
+    /**
+     * @var ServiceLocator<CountryTaxResidencyPolicyInterface>
+     */
     private ServiceLocator $locator;
 
+    /**
+     * @param ServiceLocator<CountryTaxResidencyPolicyInterface> $locator
+     */
     public function __construct(ServiceLocator $locator)
     {
         $this->locator = $locator;

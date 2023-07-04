@@ -7,6 +7,9 @@ namespace App\Assistance\Domain\CountryPolicy;
 use App\Assistance\Domain\CountryPolicy\Rule\CountryTaxResidencyRuleInterface;
 use Iterator;
 
+/**
+ * @extends Iterator<int,CountryTaxResidencyRuleInterface>
+ */
 interface CountryTaxResidencyPolicyInterface extends Iterator
 {
     /**
@@ -19,5 +22,5 @@ interface CountryTaxResidencyPolicyInterface extends Iterator
      */
     public function getRules(): array;
 
-    public function current(): false|CountryTaxResidencyRuleInterface;
+    public function current(): CountryTaxResidencyRuleInterface;
 }

@@ -6,4 +6,6 @@ namespace App\Assistance\Domain\ValueObject;
 
 use App\Shared\Domain\ValueObject\EntityId;
 
-final readonly class JournalId extends EntityId {}
+final readonly class JournalId extends EntityId
+{
+}

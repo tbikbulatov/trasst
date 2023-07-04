@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Assistance\Infrastructure\ApiPlatform\OpenApi;
 
 use ApiPlatform\OpenApi\Factory\OpenApiFactoryInterface;
+use ApiPlatform\OpenApi\Model;
 use ApiPlatform\OpenApi\Model\PathItem;
 use ApiPlatform\OpenApi\OpenApi;
-use ApiPlatform\OpenApi\Model;
 
 final readonly class OpenApiFactory implements OpenApiFactoryInterface
 {
@@ -16,14 +16,18 @@ final readonly class OpenApiFactory implements OpenApiFactoryInterface
     ) {
     }
 
+    /**
+     * @param array<string,mixed> $context
+     */
     public function __invoke(array $context = []): OpenApi
     {
         $openApi = $this->decorated->__invoke($context);
+
+        /** @var array<string,PathItem> $paths */
         $paths = $openApi->getPaths()->getPaths();
+
         $filteredPaths = new Model\Paths();
 
-        /** @var string $path */
-        /** @var PathItem $pathItem */
         foreach ($paths as $path => $pathItem) {
             switch ($path) {
                 case '/api/stays':

@@ -17,7 +17,7 @@ final readonly class Year
         private int $year,
     ) {
         if ($year < self::MIN_YEAR) {
-            throw new ValidationException('Year value can not be less than ' . self::MIN_YEAR);
+            throw new ValidationException('Year value can not be less than '.self::MIN_YEAR);
         }
     }
 

@@ -21,10 +21,10 @@ final readonly class CreateJournalProcessor implements ProcessorInterface
     }
 
     /**
-     * @param JournalResource $data
-     * @return JournalResource
+     * @param array<string,mixed> $uriVariables
+     * @param array<string,mixed> $context
      */
-    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = [])
+    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): JournalResource
     {
         assert($data instanceof JournalResource);
 
@@ -36,14 +36,11 @@ final readonly class CreateJournalProcessor implements ProcessorInterface
         return JournalResource::fromResult($result);
     }
 
-    /**
-     * @param JournalResource $r
-     * @return CreateJournalCommand
-     */
     private function createCommand(JournalResource $r): CreateJournalCommand
     {
-        return new CreateJournalCommand(
-            array_map(fn(StayResource $s) => new Stay($s->country, $s->purpose, $s->dateFrom, $s->dateTo), $r->stays)
-        );
+        /** @var array<int,Stay> */
+        $a = array_map(fn (StayResource $s) => new Stay($s->country, $s->purpose, $s->dateFrom, $s->dateTo), $r->stays);
+
+        return new CreateJournalCommand($a);
     }
 }

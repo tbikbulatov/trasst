@@ -6,18 +6,22 @@ namespace App\Assistance\Domain\ValueObject;
 
 use ArrayAccess;
 use Countable;
-use InvalidArgumentException;
 use Iterator;
+use OutOfRangeException;
 
-final /*readonly*/ class AnalysisOutcome implements ArrayAccess, Countable, Iterator
+/**
+ * @template-implements ArrayAccess<int,CountryOutcome>
+ * @template-implements Iterator<int,CountryOutcome>
+ */
+final /* readonly */ class AnalysisOutcome implements ArrayAccess, Countable, Iterator
 {
     /**
-     * @var array<CountryOutcome>
+     * @var array<int,CountryOutcome>
      */
     private array $countryOutcomes;
 
     /**
-     * @param array<CountryOutcome> $countryOutcomes
+     * @param array<int,CountryOutcome> $countryOutcomes
      */
     public function __construct(array $countryOutcomes)
     {
@@ -32,11 +36,11 @@ final /*readonly*/ class AnalysisOutcome implements ArrayAccess, Countable, Iter
     }
 
     /**
-     * @throws InvalidArgumentException
+     * @param array<int,CountryOutcome> $countryOutcomes
      */
     private function ensureTypes(array $countryOutcomes): void
     {
-        array_walk($countryOutcomes, fn($v) => $v instanceof CountryOutcome ?: throw new InvalidArgumentException());
+        array_walk($countryOutcomes, fn (mixed $v) => assert($v instanceof CountryOutcome));
     }
 
     public function count(): int
@@ -44,9 +48,9 @@ final /*readonly*/ class AnalysisOutcome implements ArrayAccess, Countable, Iter
         return count($this->countryOutcomes);
     }
 
-    public function current(): false|CountryOutcome
+    public function current(): CountryOutcome
     {
-        return current($this->countryOutcomes);
+        return $this->valid() ? current($this->countryOutcomes) : throw new OutOfRangeException();
     }
 
     public function next(): void
@@ -54,7 +58,7 @@ final /*readonly*/ class AnalysisOutcome implements ArrayAccess, Countable, Iter
         next($this->countryOutcomes);
     }
 
-    public function key(): int|null
+    public function key(): ?int
     {
         return key($this->countryOutcomes);
     }
@@ -79,6 +83,10 @@ final /*readonly*/ class AnalysisOutcome implements ArrayAccess, Countable, Iter
         return $this->countryOutcomes[$offset];
     }
 
+    /**
+     * @param int            $offset
+     * @param CountryOutcome $value
+     */
     public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->countryOutcomes[$offset] = $value;

@@ -22,12 +22,12 @@ final readonly class Stay implements Countable
     }
 
     /**
-     * Returns number of days in dates interval
+     * Returns number of days in dates interval.
      *
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function count(): int
     {
-        return $this->dateTo->diff($this->dateFrom)->days + 1;
+        return (int) $this->dateTo->diff($this->dateFrom)->days + 1;
     }
 }
