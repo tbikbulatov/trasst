@@ -19,11 +19,6 @@ abstract class AbstractTaxResidencyPolicy implements CountryTaxResidencyPolicyIn
      */
     abstract public static function getCountryCode(): string;
 
-    public function getRules(): array
-    {
-        return $this->rules;
-    }
-
     public function current(): CountryTaxResidencyRuleInterface
     {
         return $this->valid() ? current($this->rules) : throw new OutOfRangeException();

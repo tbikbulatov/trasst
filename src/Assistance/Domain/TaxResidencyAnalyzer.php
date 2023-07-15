@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Assistance\Domain;
 
 use App\Assistance\Domain\CountryPolicy\CountryTaxResidencyPoliciesRegistryInterface;
+use App\Assistance\Domain\CountryPolicy\Rule\CountryTaxResidencyRuleInterface;
 use App\Assistance\Domain\Entity\Journal;
 use App\Assistance\Domain\ValueObject\AnalysisOutcome;
 use App\Assistance\Domain\ValueObject\CountryOutcome;
@@ -27,6 +28,7 @@ final readonly class TaxResidencyAnalyzer
 
             $rulesOutcomes = [];
             foreach ($this->policiesRegistry->get($countryJournal->country) as $rule) {
+                /* @var CountryTaxResidencyRuleInterface $rule */
                 $rulesOutcomes[] = $rule->check($countryJournal);
             }
 

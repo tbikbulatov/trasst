@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Assistance\Domain\CountryPolicy\Rule;
 
-use App\Assistance\Domain\CountryPolicy\Rule\DaysPerLast12MonthsRule;
+use App\Assistance\Domain\CountryPolicy\Rule\DaysForLast12MonthsRule;
 use App\Assistance\Domain\ValueObject\CountryCode;
 use App\Assistance\Domain\ValueObject\CountryJournal;
 use App\Assistance\Domain\ValueObject\Stay;
@@ -25,7 +25,7 @@ final class DaysPerLast12MonthsRuleTest extends TestCase
      */
     public function testAmountOfDaysForResidencyShouldBeInYearInterval(int $days): void
     {
-        $sut = new DaysPerLast12MonthsRule($days);
+        $sut = new DaysForLast12MonthsRule($days);
 
         self::assertNotEmpty($sut);
     }
@@ -47,7 +47,7 @@ final class DaysPerLast12MonthsRuleTest extends TestCase
     {
         $this->expectException(DomainException::class);
 
-        new DaysPerLast12MonthsRule($days);
+        new DaysForLast12MonthsRule($days);
     }
 
     private function invalidDaysAmountForRuleConfigurationProvider(): array
@@ -68,7 +68,7 @@ final class DaysPerLast12MonthsRuleTest extends TestCase
         int $daysForResidency,
         Stay $stay,
     ): void {
-        $sut = new DaysPerLast12MonthsRule($daysForResidency);
+        $sut = new DaysForLast12MonthsRule($daysForResidency);
 
         $outcome = $sut->check(new CountryJournal([$stay]));
 
@@ -110,7 +110,7 @@ final class DaysPerLast12MonthsRuleTest extends TestCase
             new Stay($country, $purpose, new Date('2022-08-01'), new Date('2022-08-31')), // 31d
             new Stay($country, $purpose, new Date('2022-10-01'), new Date('2022-10-30')), // 30d
         ]);
-        $sut = new DaysPerLast12MonthsRule(183);
+        $sut = new DaysForLast12MonthsRule(183);
 
         $outcome = $sut->check($journal);
 
@@ -125,7 +125,7 @@ final class DaysPerLast12MonthsRuleTest extends TestCase
      */
     public function testOneStayWithinOneYearForEnoughDaysShouldLeadToResidency(int $daysForResidency, Stay $stay): void
     {
-        $sut = new DaysPerLast12MonthsRule($daysForResidency);
+        $sut = new DaysForLast12MonthsRule($daysForResidency);
 
         $outcome = $sut->check(new CountryJournal([$stay]));
 
@@ -161,7 +161,7 @@ final class DaysPerLast12MonthsRuleTest extends TestCase
             new Stay($country, $purpose, new Date('2021-06-01'), new Date('2021-06-30')), // 30d
             new Stay($country, $purpose, new Date('2021-08-01'), new Date('2021-12-31')), // 153d
         ]);
-        $sut = new DaysPerLast12MonthsRule(183);
+        $sut = new DaysForLast12MonthsRule(183);
 
         $outcome = $sut->check($journal);
 
@@ -174,7 +174,7 @@ final class DaysPerLast12MonthsRuleTest extends TestCase
         $journal = new CountryJournal([
             new Stay(CountryCode::any(), StayPurpose::TOURISM, new Date('2020-08-01'), new Date('2021-08-01')),
         ]);
-        $sut = new DaysPerLast12MonthsRule(183);
+        $sut = new DaysForLast12MonthsRule(183);
 
         $outcome = $sut->check($journal);
 
@@ -188,7 +188,7 @@ final class DaysPerLast12MonthsRuleTest extends TestCase
         $journal = new CountryJournal([
             new Stay(CountryCode::any(), StayPurpose::TOURISM, new Date('2019-05-01'), new Date('2022-08-01')),
         ]);
-        $sut = new DaysPerLast12MonthsRule(183);
+        $sut = new DaysForLast12MonthsRule(183);
 
         $outcome = $sut->check($journal);
 
@@ -207,7 +207,7 @@ final class DaysPerLast12MonthsRuleTest extends TestCase
             new Stay($country, $purpose, new Date('2019-01-01'), new Date('2019-03-03')), // 62d
             new Stay($country, $purpose, new Date('2020-03-01'), new Date('2020-03-01')), // 1d
         ]);
-        $sut = new DaysPerLast12MonthsRule(4);
+        $sut = new DaysForLast12MonthsRule(4);
 
         $outcome = $sut->check($journal);
 
@@ -224,7 +224,7 @@ final class DaysPerLast12MonthsRuleTest extends TestCase
             new Stay($country, $purpose, new Date('2019-01-01'), new Date('2019-03-02')), // 6d
             new Stay($country, $purpose, new Date('2020-03-01'), new Date('2020-03-01')), // 1d
         ]);
-        $sut = new DaysPerLast12MonthsRule(4);
+        $sut = new DaysForLast12MonthsRule(4);
 
         $outcome = $sut->check($journal);
 
@@ -244,7 +244,7 @@ final class DaysPerLast12MonthsRuleTest extends TestCase
             new Stay($country, $purpose, new Date('2022-01-01'), new Date('2022-01-02')), // 2d
             new Stay($country, $purpose, new Date('2023-05-01'), new Date('2023-05-01')), // 1d
         ]);
-        $sut = new DaysPerLast12MonthsRule(4);
+        $sut = new DaysForLast12MonthsRule(4);
 
         $outcome = $sut->check($journal);
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Assistance\Domain\CountryPolicy\Rule;
 
-use App\Assistance\Domain\CountryPolicy\Rule\DaysPerCalendarYearRule;
+use App\Assistance\Domain\CountryPolicy\Rule\DaysForCalendarYearRule;
 use App\Assistance\Domain\ValueObject\CountryCode;
 use App\Assistance\Domain\ValueObject\CountryJournal;
 use App\Assistance\Domain\ValueObject\Stay;
@@ -26,7 +26,7 @@ final class DaysPerCalendarYearRuleTest extends TestCase
      */
     public function testAmountOfDaysForResidencyShouldBeInYearInterval(int $days): void
     {
-        $sut = new DaysPerCalendarYearRule($days);
+        $sut = new DaysForCalendarYearRule($days);
 
         self::assertNotEmpty($sut);
     }
@@ -48,7 +48,7 @@ final class DaysPerCalendarYearRuleTest extends TestCase
     {
         $this->expectException(DomainException::class);
 
-        new DaysPerCalendarYearRule($days);
+        new DaysForCalendarYearRule($days);
     }
 
     private function invalidDaysAmountForRuleConfigurationProvider(): array
@@ -69,7 +69,7 @@ final class DaysPerCalendarYearRuleTest extends TestCase
         int $daysForResidency,
         Stay $stay,
     ): void {
-        $sut = new DaysPerCalendarYearRule($daysForResidency);
+        $sut = new DaysForCalendarYearRule($daysForResidency);
 
         $outcome = $sut->check(new CountryJournal([$stay]));
 
@@ -108,7 +108,7 @@ final class DaysPerCalendarYearRuleTest extends TestCase
             new Stay($country, $purpose, new Date('2021-06-01'), new Date('2021-06-30')), // 30d
             new Stay($country, $purpose, new Date('2021-12-01'), new Date('2021-12-31')), // 31d
         ]);
-        $sut = new DaysPerCalendarYearRule(183);
+        $sut = new DaysForCalendarYearRule(183);
 
         $outcome = $sut->check($journal);
 
@@ -122,7 +122,7 @@ final class DaysPerCalendarYearRuleTest extends TestCase
         $journal = new CountryJournal([
             new Stay(CountryCode::any(), StayPurpose::TOURISM, new Date('2020-07-03'), new Date('2021-07-01')),
         ]);
-        $sut = new DaysPerCalendarYearRule(183);
+        $sut = new DaysForCalendarYearRule(183);
 
         $outcome = $sut->check($journal);
 
@@ -145,7 +145,7 @@ final class DaysPerCalendarYearRuleTest extends TestCase
             new Stay($country, $purpose, new Date('2022-10-01'), new Date('2022-12-31')), // 92d
             new Stay($country, $purpose, new Date('2023-01-01'), new Date('2023-05-31')), // 151d
         ]);
-        $sut = new DaysPerCalendarYearRule(183);
+        $sut = new DaysForCalendarYearRule(183);
 
         $outcome = $sut->check($journal);
 
@@ -162,7 +162,7 @@ final class DaysPerCalendarYearRuleTest extends TestCase
         int $daysForResidency,
         CountryJournal $journal,
     ): void {
-        $sut = new DaysPerCalendarYearRule($daysForResidency);
+        $sut = new DaysForCalendarYearRule($daysForResidency);
 
         $outcome = $sut->check($journal);
 
@@ -198,7 +198,7 @@ final class DaysPerCalendarYearRuleTest extends TestCase
             new Stay($country, $purpose, new Date('2021-06-01'), new Date('2021-06-30')), // 30d
             new Stay($country, $purpose, new Date('2021-08-01'), new Date('2021-12-31')), // 152d
         ]);
-        $sut = new DaysPerCalendarYearRule(183);
+        $sut = new DaysForCalendarYearRule(183);
 
         $outcome = $sut->check($journal);
 
@@ -211,7 +211,7 @@ final class DaysPerCalendarYearRuleTest extends TestCase
         $journal = new CountryJournal([
             new Stay(CountryCode::any(), StayPurpose::TOURISM, new Date('2020-08-01'), new Date('2021-08-01')),
         ]);
-        $sut = new DaysPerCalendarYearRule(183);
+        $sut = new DaysForCalendarYearRule(183);
 
         $outcome = $sut->check($journal);
 
@@ -225,7 +225,7 @@ final class DaysPerCalendarYearRuleTest extends TestCase
         $journal = new CountryJournal([
             new Stay(CountryCode::any(), StayPurpose::TOURISM, new Date('2019-07-02'), new Date('2022-08-01')),
         ]);
-        $sut = new DaysPerCalendarYearRule(183);
+        $sut = new DaysForCalendarYearRule(183);
 
         $outcome = $sut->check($journal);
 
@@ -249,7 +249,7 @@ final class DaysPerCalendarYearRuleTest extends TestCase
             new Stay($country, $purpose, new Date('2022-04-10'), new Date('2022-12-31')), // 266d
             new Stay($country, $purpose, new Date('2023-01-01'), new Date('2023-04-30')), // 120d
         ]);
-        $sut = new DaysPerCalendarYearRule(183);
+        $sut = new DaysForCalendarYearRule(183);
 
         $outcome = $sut->check($journal);
 

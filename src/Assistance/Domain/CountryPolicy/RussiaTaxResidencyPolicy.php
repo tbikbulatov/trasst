@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Assistance\Domain\CountryPolicy;
 
-use App\Assistance\Domain\CountryPolicy\Rule\DaysPerCalendarYearRule;
+use App\Assistance\Domain\CountryPolicy\Rule\DaysForCalendarYearRule;
 use App\Assistance\Domain\ValueObject\CountryCode;
 
 final class RussiaTaxResidencyPolicy extends AbstractTaxResidencyPolicy
@@ -12,7 +12,7 @@ final class RussiaTaxResidencyPolicy extends AbstractTaxResidencyPolicy
     public function __construct()
     {
         $this->rules = [
-            new DaysPerCalendarYearRule(183),
+            new DaysForCalendarYearRule(183),
         ];
     }
 

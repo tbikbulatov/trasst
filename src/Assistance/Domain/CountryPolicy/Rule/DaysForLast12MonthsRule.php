@@ -13,7 +13,7 @@ use DateInterval;
 use DateTimeImmutable;
 use DomainException;
 
-final readonly class DaysPerLast12MonthsRule implements CountryTaxResidencyRuleInterface
+final readonly class DaysForLast12MonthsRule implements CountryTaxResidencyRuleInterface
 {
     private const MIN_DAYS = 1;
     private const MAX_DAYS = 365;

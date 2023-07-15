@@ -11,7 +11,7 @@ use App\Assistance\Domain\ValueObject\YearOutcome;
 use DateTimeImmutable;
 use DomainException;
 
-final readonly class DaysPerCalendarYearRule implements CountryTaxResidencyRuleInterface
+final readonly class DaysForCalendarYearRule implements CountryTaxResidencyRuleInterface
 {
     private const MIN_DAYS = 1;
     private const MAX_DAYS = 365;
