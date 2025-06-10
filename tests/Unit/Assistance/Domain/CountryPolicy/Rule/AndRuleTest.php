@@ -17,7 +17,6 @@ use DateTimeImmutable as Date;
 use DomainException;
 use PHPUnit\Framework\TestCase;
 
-
 final class AndRuleTest extends TestCase
 {
     public function testConstructorThrowsExceptionWhenRulesArrayIsEmpty(): void

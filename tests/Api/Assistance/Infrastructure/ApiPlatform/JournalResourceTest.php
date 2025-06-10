@@ -21,7 +21,7 @@ class JournalResourceTest extends ApiTestCase
     {
         $journalId = $this->createJournalWithSingleStay();
 
-        $response = $this->client->request('GET', '/api/journals/' . $journalId);
+        $response = $this->client->request('GET', '/api/journals/'.$journalId);
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
@@ -30,7 +30,7 @@ class JournalResourceTest extends ApiTestCase
         $this->assertArrayHasKey('stays', $responseContent, 'Response does not contain an "stays" field');
         $this->assertCount(1, $responseContent['stays'], 'Field "stays" contain unexpected number of elements');
         $stay = reset($responseContent['stays']);
-        $this->assertIsArray($stay , 'Field "stays" is not array');
+        $this->assertIsArray($stay, 'Field "stays" is not array');
 
         $requiredKeys = ['@id', '@type', 'country', 'purpose', 'dateFrom', 'dateTo'];
         foreach ($requiredKeys as $key) {
@@ -43,7 +43,7 @@ class JournalResourceTest extends ApiTestCase
     {
         $journalId = $this->createJournalWithSingleStay();
 
-        $response = $this->client->request('POST', '/api/journals/' . $journalId . '/analyze');
+        $response = $this->client->request('POST', '/api/journals/'.$journalId.'/analyze');
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
@@ -69,15 +69,15 @@ class JournalResourceTest extends ApiTestCase
         $journalId = $this->createJournalWithSingleStay();
 
         // First, verify the journal exists
-        $this->client->request('GET', '/api/journals/' . $journalId);
+        $this->client->request('GET', '/api/journals/'.$journalId);
         $this->assertResponseIsSuccessful();
 
         // Delete the journal
-        $this->client->request('DELETE', '/api/journals/' . $journalId);
+        $this->client->request('DELETE', '/api/journals/'.$journalId);
         $this->assertResponseStatusCodeSame(Response::HTTP_NO_CONTENT);
 
         // Verify the journal no longer exists
-        $this->client->request('GET', '/api/journals/' . $journalId);
+        $this->client->request('GET', '/api/journals/'.$journalId);
         $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
     }
 
@@ -85,7 +85,7 @@ class JournalResourceTest extends ApiTestCase
     {
         $nonExistentId = Uuid::v7()->__toString();
 
-        $this->client->request('GET', '/api/journals/' . $nonExistentId);
+        $this->client->request('GET', '/api/journals/'.$nonExistentId);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');

@@ -15,7 +15,6 @@ use DomainException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-
 final class DaysForCalendarYearRuleTest extends TestCase
 {
     #[DataProvider('validDaysAmountForRuleConfigurationProvider')]
