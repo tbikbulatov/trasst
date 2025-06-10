@@ -6,6 +6,7 @@ namespace App\Shared\Infrastructure\Symfony\Messenger;
 
 use App\Shared\Application\Command\CommandBusInterface;
 use App\Shared\Application\Command\CommandInterface;
+use Override;
 use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\HandleTrait;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -20,15 +21,18 @@ final class MessengerCommandBus implements CommandBusInterface
         $this->messageBus = $commandBus;
     }
 
+    /**
+     * @throws Throwable
+     */
+    #[Override]
     public function dispatch(CommandInterface $command): mixed
     {
         try {
             return $this->handle($command);
         } catch (HandlerFailedException $e) {
-            /** @var array{0: Throwable} $exceptions */
-            $exceptions = $e->getNestedExceptions();
+            $exceptions = $e->getWrappedExceptions() ?: [$e];
 
-            throw $exceptions[0];
+            throw $exceptions[array_key_first($exceptions)];
         }
     }
 }

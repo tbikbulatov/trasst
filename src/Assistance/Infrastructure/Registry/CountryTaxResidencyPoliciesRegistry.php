@@ -7,6 +7,7 @@ namespace App\Assistance\Infrastructure\Registry;
 use App\Assistance\Domain\CountryPolicy\CountryTaxResidencyPoliciesRegistryInterface;
 use App\Assistance\Domain\CountryPolicy\CountryTaxResidencyPolicyInterface;
 use App\Assistance\Domain\ValueObject\CountryCode;
+use Override;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 
 final class CountryTaxResidencyPoliciesRegistry implements CountryTaxResidencyPoliciesRegistryInterface
@@ -24,11 +25,13 @@ final class CountryTaxResidencyPoliciesRegistry implements CountryTaxResidencyPo
         $this->locator = $locator;
     }
 
+    #[Override]
     public function has(CountryCode $country): bool
     {
         return $this->locator->has($country->value);
     }
 
+    #[Override]
     public function get(CountryCode $country): CountryTaxResidencyPolicyInterface
     {
         return $this->locator->get($country->value);

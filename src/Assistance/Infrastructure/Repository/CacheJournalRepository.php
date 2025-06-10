@@ -8,6 +8,7 @@ use App\Assistance\Domain\Entity\Journal;
 use App\Assistance\Domain\Exception\JournalNotFoundException;
 use App\Assistance\Domain\JournalRepositoryInterface;
 use App\Assistance\Domain\ValueObject\JournalId;
+use Override;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -24,6 +25,7 @@ final readonly class CacheJournalRepository implements JournalRepositoryInterfac
      * @psalm-suppress MixedInferredReturnType
      * @psalm-suppress MixedReturnStatement
      */
+    #[Override]
     public function get(JournalId $id): Journal
     {
         /** @var CacheItemInterface $cacheItem */
@@ -39,16 +41,19 @@ final readonly class CacheJournalRepository implements JournalRepositoryInterfac
      * @psalm-suppress MixedInferredReturnType
      * @psalm-suppress MixedReturnStatement
      */
+    #[Override]
     public function findOne(JournalId $id): ?Journal
     {
         return $this->journalCache->getItem($id->value)->get();
     }
 
+    #[Override]
     public function remove(Journal $journal): void
     {
         $this->journalCache->delete($journal->getId()->value);
     }
 
+    #[Override]
     public function save(Journal $journal): void
     {
         /** @var CacheItemInterface $cacheItem */

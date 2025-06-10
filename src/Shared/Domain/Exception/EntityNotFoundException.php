@@ -17,17 +17,18 @@ class EntityNotFoundException extends RuntimeException
 
     public static function withId(EntityId $id): static
     {
-        return new static(sprintf('%s #%s not found', self::resolveEntityName(), (string) $id));
+        return new static(sprintf('%s #%s not found', self::resolveEntityName() ?? 'Entity', (string) $id));
     }
 
-    private static function resolveEntityName(): string
+    private static function resolveEntityName(): ?string
     {
-        $classname = get_called_class();
+        $shortClassName = basename(str_replace('\\', '/', get_called_class()));
+        $suffix = 'NotFoundException';
 
-        if (!$pos = strrpos($classname, '\\')) {
-            return 'Entity';
+        if (str_ends_with($shortClassName, $suffix)) {
+            return substr($shortClassName, 0, -strlen($suffix));
         }
 
-        return substr($classname, $pos + 1, -strlen('NotFoundException'));
+        return null;
     }
 }

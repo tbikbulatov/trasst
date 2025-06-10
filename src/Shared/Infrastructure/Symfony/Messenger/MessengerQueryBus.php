@@ -6,6 +6,7 @@ namespace App\Shared\Infrastructure\Symfony\Messenger;
 
 use App\Shared\Application\Query\QueryBusInterface;
 use App\Shared\Application\Query\QueryInterface;
+use Override;
 use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\HandleTrait;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -20,15 +21,18 @@ final class MessengerQueryBus implements QueryBusInterface
         $this->messageBus = $queryBus;
     }
 
+    /**
+     * @throws Throwable
+     */
+    #[Override]
     public function ask(QueryInterface $query): mixed
     {
         try {
             return $this->handle($query);
         } catch (HandlerFailedException $e) {
-            /** @var array{0: Throwable} $exceptions */
-            $exceptions = $e->getNestedExceptions();
+            $exceptions = $e->getWrappedExceptions() ?: [$e];
 
-            throw $exceptions[0];
+            throw $exceptions[array_key_first($exceptions)];
         }
     }
 }

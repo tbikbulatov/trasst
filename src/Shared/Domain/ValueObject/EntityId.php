@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Shared\Domain\ValueObject;
 
+use Override;
 use Stringable;
 
 abstract readonly class EntityId implements Stringable
@@ -18,6 +19,7 @@ abstract readonly class EntityId implements Stringable
         return get_class($this) === get_class($anotherId) && $this->value === $anotherId->value;
     }
 
+    #[Override]
     public function __toString(): string
     {
         return $this->value;
