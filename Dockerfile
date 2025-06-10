@@ -10,16 +10,16 @@ FROM composer/composer:2-bin AS composer
 FROM mlocati/php-extension-installer:latest AS php_extension_installer
 
 # Build Caddy with the Mercure and Vulcain modules
-FROM caddy:2.7-builder-alpine AS app_caddy_builder
+FROM caddy:2.10-builder-alpine AS app_caddy_builder
 
-RUN xcaddy build v2.6.4 \
-	--with github.com/dunglas/mercure \
-	--with github.com/dunglas/mercure/caddy \
-	--with github.com/dunglas/vulcain \
-	--with github.com/dunglas/vulcain/caddy
+RUN xcaddy build v2.10.0 \
+    --with github.com/dunglas/mercure \
+    --with github.com/dunglas/mercure/caddy \
+    --with github.com/dunglas/vulcain \
+    --with github.com/dunglas/vulcain/caddy
 
 # Prod image
-FROM php:8.2-fpm-alpine AS app_php
+FROM php:8.4-fpm-alpine AS app_php
 
 # Allow to use development versions of Symfony
 ARG STABILITY="stable"
@@ -38,19 +38,20 @@ COPY --from=php_extension_installer --link /usr/bin/install-php-extensions /usr/
 
 # persistent / runtime deps
 RUN apk add --no-cache \
-		acl \
-		fcgi \
-		file \
-		gettext \
-		git \
-	;
+        acl \
+        fcgi \
+        file \
+        gettext \
+        git \
+    ;
 
 RUN set -eux; \
     install-php-extensions \
-    	apcu \
-    	intl \
-		opcache \
-    	zip \
+        apcu \
+        bcmath  \
+        intl \
+        opcache \
+        zip \
     ;
 
 ###> recipes ###
@@ -84,8 +85,8 @@ COPY --from=composer --link /composer /usr/bin/composer
 COPY --link composer.* symfony.* ./
 RUN set -eux; \
     if [ -f composer.json ]; then \
-		composer install --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress; \
-		composer clear-cache; \
+        composer install --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress; \
+        composer clear-cache; \
     fi
 
 # copy sources
@@ -93,12 +94,12 @@ COPY --link  . ./
 RUN rm -Rf docker/
 
 RUN set -eux; \
-	mkdir -p var/cache var/log; \
+    mkdir -p var/cache var/log; \
     if [ -f composer.json ]; then \
-		composer dump-autoload --classmap-authoritative --no-dev; \
-		composer dump-env prod; \
-		composer run-script --no-dev post-install-cmd; \
-		chmod +x bin/console; sync; \
+        composer dump-autoload --classmap-authoritative --no-dev; \
+        composer dump-env prod; \
+        composer run-script --no-dev post-install-cmd; \
+        chmod +x bin/console; sync; \
     fi
 
 # Dev image
@@ -108,20 +109,20 @@ ENV APP_ENV=dev XDEBUG_MODE=off
 VOLUME /srv/app/var/
 
 RUN rm "$PHP_INI_DIR/conf.d/app.prod.ini"; \
-	mv "$PHP_INI_DIR/php.ini" "$PHP_INI_DIR/php.ini-production"; \
-	mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+    mv "$PHP_INI_DIR/php.ini" "$PHP_INI_DIR/php.ini-production"; \
+    mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 
 COPY --link docker/php/conf.d/app.dev.ini $PHP_INI_DIR/conf.d/
 
 RUN set -eux; \
-	install-php-extensions \
-    	xdebug \
+    install-php-extensions \
+        xdebug \
     ;
 
 RUN rm -f .env.local.php
 
 # Caddy image
-FROM caddy:2.6-alpine AS app_caddy
+FROM caddy:2.10-alpine AS app_caddy
 
 WORKDIR /srv/app
 

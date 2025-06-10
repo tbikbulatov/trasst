@@ -7,44 +7,79 @@ parameters:
         - name: Domain
           collectors:
               - type: directory
-                regex: .+/Domain/.*
+                value: src/Assistance/Domain/.*
 
         - name: Application
           collectors:
               - type: directory
-                regex: .+/Application/.*
+                value: src/Assistance/Application/.*
 
         - name: Infrastructure
           collectors:
               - type: directory
-                regex: .+/Infrastructure/.*
+                value: src/Assistance/Infrastructure/.*
+
+        - name: SharedDomain
+          collectors:
+              - type: directory
+                value: src/Shared/Domain/.*
+
+        - name: SharedApplication
+          collectors:
+              - type: directory
+                value: src/Shared/Application/.*
+
+        - name: SharedInfrastructure
+          collectors:
+              - type: directory
+                value: src/Shared/Infrastructure/.*
+
+        - name: PhpCore
+          collectors:
+              - { type: classLike, value: ^BcMath.* }
 
         - name: Vendors
           collectors:
-              - { type: className, regex: ^ApiPlatform\\ }
-              - { type: className, regex: ^Psr\\ }
-              - { type: className, regex: ^Symfony\\(?!(Component\\Uid\\)) }
+              - { type: classLike, value: ^Psr.* }
+              - { type: classLike, value: ^ApiPlatform.* }
+              - { type: classLike, value: ^Symfony.* }
 
         - name: Attributes
           collectors:
-              - { type: className, regex: ^Doctrine\\ORM\\Mapping }
+              - { type: classLike, value: ^Doctrine\\ORM\\Mapping.* }
 
         - name: Helpers
           collectors:
-              - { type: className, regex: ^Symfony\\Component\\Uid\\ }
+              - { type: classLike, value: ^Symfony\\Component\\Uid.* }
 
     ruleset:
         Domain:
+            - SharedDomain
+            - PhpCore
 
         Application:
+            - SharedApplication
             - Domain
+            - SharedDomain
             - Helpers
             - Attributes
 
-        Infrastructure: 
+        Infrastructure:
+            - SharedInfrastructure
             - Domain
             - Application
+            - SharedApplication
             - Vendors
             - Helpers
             - Attributes
 
+        SharedInfrastructure:
+            - SharedApplication
+            - Vendors
+            - Helpers
+            - Attributes
+
+        PhpCore: ~
+
+        Vendors:
+            - PhpCore

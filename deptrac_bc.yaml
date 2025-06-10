@@ -6,20 +6,24 @@ parameters:
         - name: Assistance
           collectors:
               - type: directory
-                regex: src/Assistance/.*
+                value: src/Assistance/.*
 
         - name: Shared
           collectors:
               - type: directory
-                regex: src/Shared/.*
+                value: src/Shared/.*
 
         - name: Vendors
           collectors:
-              - { type: className, regex: ^ApiPlatform\\ }
-              - { type: className, regex: ^Doctrine\\ }
-              - { type: className, regex: ^Psr\\ }
-              - { type: className, regex: ^Symfony\\ }
+              - { type: classLike, value: ^ApiPlatform.* }
+              - { type: classLike, value: ^BcMath.* }
+              - { type: classLike, value: ^Doctrine.* }
+              - { type: classLike, value: ^Psr.* }
+              - { type: classLike, value: ^Symfony.* }
 
     ruleset:
-        Assistance: [ Shared, Vendors ]
-        Shared: [ Vendors ]
+        Assistance:
+            - Shared
+            - Vendors
+        Shared:
+            - Vendors

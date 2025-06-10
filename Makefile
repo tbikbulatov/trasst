@@ -47,22 +47,25 @@ vendor:
 	@$(COMPOSER) install --optimize-autoloader
 
 ## Start the project
-start:
+up:
 	@$(DC) up -d --remove-orphans --no-recreate
 
 ## Stop the project
-stop:
+down:
 	@$(DC) stop
 	@$(DC) rm -v --force
 
-.PHONY: php database install vendor start stop
+.PHONY: php install vendor up down
+
+
+
 
 #################################
 Tests:
 
 ## Run codestyle static analysis
-php-cs-fixer:
-	@$(EXEC) vendor/bin/php-cs-fixer fix --dry-run --diff
+cs:
+	@$(DC) exec -e PHP_CS_FIXER_IGNORE_ENV=1 php vendor/bin/php-cs-fixer fix --dry-run --diff
 
 ## Run psalm static analysis
 psalm:
@@ -70,26 +73,29 @@ psalm:
 
 ## Run code depedencies static analysis
 deptrac:
-	@echo "\n${YELLOW}Checking Bounded contexts...${RESET}"
-	@$(EXEC) vendor/bin/deptrac analyze --fail-on-uncovered --report-uncovered --no-progress --cache-file .deptrac_bc.cache --config-file deptrac_bc.yaml
+	#@echo "\n${YELLOW}Checking Bounded contexts...${RESET}"
+	@$(EXEC) vendor/bin/deptrac analyze -c deptrac_bc.yaml --cache-file=.deptrac_bc.cache -n --no-progress --fail-on-uncovered --report-uncovered
 
-	@echo "\n${YELLOW}Checking Hexagonal layers...${RESET}"
-	@$(EXEC) vendor/bin/deptrac analyze --fail-on-uncovered --report-uncovered --no-progress --cache-file .deptrac_layers.cache --config-file deptrac_layers.yaml
+	#@echo "\n${YELLOW}Checking Hexagonal layers...${RESET}"
+	@$(EXEC) vendor/bin/deptrac analyze -c deptrac_layers.yaml --cache-file=.deptrac_layers.cache -n --no-progress --fail-on-uncovered --report-uncovered
 
 ## Run phpunit tests
 phpunit:
-	@$(EXEC) bin/phpunit
+	@$(EXEC) vendor/phpunit/phpunit/phpunit
 
 ## Run either static analysis and tests
-ci: php-cs-fixer psalm deptrac phpunit
+ci: cs psalm deptrac phpunit
 
-.PHONY: php-cs-fixer psalm deptrac phpunit ci
+.PHONY: cs psalm deptrac phpunit ci
+
+
+
 
 #################################
 Tools:
 
 ## Fix PHP files to be compliant with coding standards
 fix-cs:
-	@$(EXEC) vendor/bin/php-cs-fixer fix
+	@$(DC) exec -e PHP_CS_FIXER_IGNORE_ENV=1 php vendor/bin/php-cs-fixer fix
 
 .PHONY: fix-cs

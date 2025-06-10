@@ -9,20 +9,12 @@
 /vendor/
 ###< symfony/framework-bundle ###
 
-.idea/
-
-###> symfony/phpunit-bridge ###
-.phpunit.result.cache
-/phpunit.xml
-###< symfony/phpunit-bridge ###
-
-###> qossmic/deptrac-shim ###
-/.deptrac.cache
-/.deptrac_bc.cache
-/.deptrac_layers.cache
-###< qossmic/deptrac-shim ###
-
 ###> friendsofphp/php-cs-fixer ###
 /.php-cs-fixer.php
 /.php-cs-fixer.cache
 ###< friendsofphp/php-cs-fixer ###
+
+###> phpunit/phpunit ###
+/phpunit.xml
+/.phpunit.cache/
+###< phpunit/phpunit ###
