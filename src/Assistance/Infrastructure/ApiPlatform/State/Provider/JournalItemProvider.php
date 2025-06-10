@@ -11,6 +11,7 @@ use App\Assistance\Application\Query\FindJournalQuery;
 use App\Assistance\Domain\ValueObject\JournalId;
 use App\Assistance\Infrastructure\ApiPlatform\Resource\JournalResource;
 use App\Shared\Application\Query\QueryBusInterface;
+use Override;
 
 /**
  * @implements ProviderInterface<JournalResource>
@@ -26,6 +27,7 @@ final readonly class JournalItemProvider implements ProviderInterface
      * @param array<string,mixed> $uriVariables
      * @param array<string,mixed> $context
      */
+    #[Override]
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): ?JournalResource
     {
         /** @var string $id */

@@ -12,7 +12,11 @@ use App\Assistance\Domain\ValueObject\Stay;
 use App\Assistance\Infrastructure\ApiPlatform\Resource\JournalResource;
 use App\Assistance\Infrastructure\ApiPlatform\Resource\StayResource;
 use App\Shared\Application\Command\CommandBusInterface;
+use Override;
 
+/**
+ * @implements ProcessorInterface<JournalResource, JournalResource>
+ */
 final readonly class CreateJournalProcessor implements ProcessorInterface
 {
     public function __construct(
@@ -24,6 +28,7 @@ final readonly class CreateJournalProcessor implements ProcessorInterface
      * @param array<string,mixed> $uriVariables
      * @param array<string,mixed> $context
      */
+    #[Override]
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): JournalResource
     {
         assert($data instanceof JournalResource);

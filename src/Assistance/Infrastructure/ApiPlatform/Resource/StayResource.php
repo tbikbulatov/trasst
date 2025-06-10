@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Assistance\Infrastructure\ApiPlatform\Resource;
 
-use ApiPlatform\Action\NotFoundAction;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
+use ApiPlatform\Symfony\Action\NotFoundAction;
 use App\Assistance\Domain\ValueObject\CountryCode;
 use App\Assistance\Domain\ValueObject\Stay;
 use App\Assistance\Domain\ValueObject\StayPurpose;

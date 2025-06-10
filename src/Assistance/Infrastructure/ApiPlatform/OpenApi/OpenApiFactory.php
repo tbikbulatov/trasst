@@ -8,6 +8,7 @@ use ApiPlatform\OpenApi\Factory\OpenApiFactoryInterface;
 use ApiPlatform\OpenApi\Model;
 use ApiPlatform\OpenApi\Model\PathItem;
 use ApiPlatform\OpenApi\OpenApi;
+use Override;
 
 final readonly class OpenApiFactory implements OpenApiFactoryInterface
 {
@@ -19,6 +20,7 @@ final readonly class OpenApiFactory implements OpenApiFactoryInterface
     /**
      * @param array<string,mixed> $context
      */
+    #[Override]
     public function __invoke(array $context = []): OpenApi
     {
         $openApi = $this->decorated->__invoke($context);
