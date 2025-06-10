@@ -8,6 +8,7 @@ use App\Assistance\Domain\CountryPolicy\AbstractTaxResidencyPolicy;
 use App\Assistance\Domain\CountryPolicy\CountryTaxResidencyPolicyInterface;
 use App\Assistance\Domain\CountryPolicy\Rule\CountryTaxResidencyRuleInterface;
 use App\Assistance\Domain\ValueObject\CountryCode;
+use Override;
 
 final class CountryTaxPolicyMother
 {
@@ -25,6 +26,7 @@ final class CountryTaxPolicyMother
                 self::$countryCode = $countryCode ?? CountryCode::any();
             }
 
+            #[Override]
             public static function getCountryCode(): string
             {
                 return self::$countryCode->value;

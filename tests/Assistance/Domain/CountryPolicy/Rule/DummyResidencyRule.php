@@ -6,7 +6,7 @@ namespace App\Tests\Assistance\Domain\CountryPolicy\Rule;
 
 use App\Assistance\Domain\CountryPolicy\Rule\CountryTaxResidencyRuleInterface;
 use App\Assistance\Domain\ValueObject\CountryJournal;
-use App\Assistance\Domain\ValueObject\TaxResidencyComment;
+use App\Assistance\Domain\ValueObject\TaxResidencyComment as Comment;
 use App\Assistance\Domain\ValueObject\Year;
 use App\Assistance\Domain\ValueObject\YearOutcome;
 
@@ -25,7 +25,7 @@ final readonly class DummyResidencyRule implements CountryTaxResidencyRuleInterf
     public function check(CountryJournal $journal): array
     {
         return [
-            YearOutcome::resident($this->year, TaxResidencyComment::single('Tax residency comment')),
+            $this->year->toInt() => YearOutcome::resident($this->year, Comment::single($this->getDescription())),
         ];
     }
 }

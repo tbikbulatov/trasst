@@ -19,6 +19,8 @@ use App\Tests\Assistance\Domain\ValueObject\CountryTaxPolicyMother;
 use App\Tests\Common\BaseKernelTestCase;
 use DateTimeImmutable as Date;
 use Generator;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
 
 final class TaxResidencyAnalyzerTest extends BaseKernelTestCase
 {
@@ -33,9 +35,8 @@ final class TaxResidencyAnalyzerTest extends BaseKernelTestCase
 
     /**
      * @param array<string, array<int>> $expectations
-     *
-     * @dataProvider analysisOutcomeProvider
      */
+    #[DataProvider('analysisOutcomeProvider')]
     public function testAnalysisOutcomeShouldMatchCountryAndYearOutcomesAmount(
         array $expectations,
         Journal $journal,
@@ -54,7 +55,7 @@ final class TaxResidencyAnalyzerTest extends BaseKernelTestCase
     /**
      * @return Generator<string,array>
      */
-    private function analysisOutcomeProvider(): Generator
+    public static function analysisOutcomeProvider(): Generator
     {
         $journalIdGenerator = new JournalIdGenerator();
         $purpose = StayPurpose::TOURISM;
@@ -143,10 +144,8 @@ final class TaxResidencyAnalyzerTest extends BaseKernelTestCase
         ];
     }
 
-    /**
-     * @dataProvider rulesToCheckCallsProvider
-     */
-    public function testEachCountryPolicyRuleIsChecked(array $rules): void
+    #[DataProvider('rulesToCheckCallsProvider')]
+    public function testEachCountryPolicyRuleShouldBeChecked(array $rules): void
     {
         $countryTaxPolicy = CountryTaxPolicyMother::create($rules);
         $country = CountryCode::from($countryTaxPolicy::getCountryCode());
@@ -167,29 +166,28 @@ final class TaxResidencyAnalyzerTest extends BaseKernelTestCase
     /**
      * @return Generator<string,array<CountryTaxResidencyRuleInterface>>
      */
-    private function rulesToCheckCallsProvider(): Generator
+    public static function rulesToCheckCallsProvider(): Generator
     {
-        yield 'one rule' => [$this->generateRuleMocks(1)];
-        yield 'two rules' => [$this->generateRuleMocks(2)];
-        yield 'five rules' => [$this->generateRuleMocks(5)];
-        yield 'ten rules' => [$this->generateRuleMocks(10)];
+        $testCase = new self('dummy');
+        yield 'one rule' => [self::generateRuleMocks($testCase, 1)];
+        yield 'two rules' => [self::generateRuleMocks($testCase, 2)];
+        yield 'five rules' => [self::generateRuleMocks($testCase, 5)];
+        yield 'ten rules' => [self::generateRuleMocks($testCase, 10)];
     }
 
-    private function generateRuleMocks(int $amount): array
+    private static function generateRuleMocks(TestCase $testCase, int $callsNumber): array
     {
-        $acc = [];
-        while ($amount--) {
-            $rule = $this->createMock(CountryTaxResidencyRuleInterface::class);
-            $rule->expects($this->once())->method('check');
-            $acc[] = $rule;
+        $rules = [];
+        while ($callsNumber--) {
+            $rule = $testCase->createMock(CountryTaxResidencyRuleInterface::class);
+            $rule->expects($testCase->once())->method('check');
+            $rules[] = $rule;
         }
 
-        return $acc;
+        return $rules;
     }
 
-    /**
-     * @dataProvider dummyRulesToCheckOutcomesSumUpProvider
-     */
+    #[DataProvider('dummyRulesToCheckOutcomesSumUpProvider')]
     public function testItSumUpRuleOutcomesCorrectly(callable $getRules): void
     {
         $year = 2022;
@@ -217,7 +215,7 @@ final class TaxResidencyAnalyzerTest extends BaseKernelTestCase
     /**
      * @return Generator<string,array>
      */
-    private function dummyRulesToCheckOutcomesSumUpProvider(): Generator
+    public static function dummyRulesToCheckOutcomesSumUpProvider(): Generator
     {
         yield 'one residency rule' => [fn (Year $year) => [
             'expect' => true,

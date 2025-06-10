@@ -24,7 +24,7 @@ final readonly class DummyNoResidencyRule implements CountryTaxResidencyRuleInte
     public function check(CountryJournal $journal): array
     {
         return [
-            YearOutcome::notResident($this->year),
+            $this->year->toInt() => YearOutcome::notResident($this->year),
         ];
     }
 }
