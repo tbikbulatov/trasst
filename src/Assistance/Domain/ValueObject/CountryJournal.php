@@ -10,7 +10,9 @@ use App\Shared\Domain\Exception\ValidationException;
 use Countable;
 use InvalidArgumentException;
 use Iterator;
+use OutOfBoundsException;
 use OutOfRangeException;
+use Override;
 
 /**
  * @template-implements Iterator<int,Stay>
@@ -49,31 +51,41 @@ final class CountryJournal implements Countable, Iterator
         return new self(array_merge($this->stays, [$stay]));
     }
 
+    #[Override]
     public function count(): int
     {
         return count($this->stays);
     }
 
+    #[Override]
     public function current(): Stay
     {
-        return $this->valid() ? current($this->stays) : throw new OutOfRangeException();
+        if ($this->valid() && ($current = current($this->stays))) {
+            return $current;
+        }
+
+        throw new OutOfRangeException();
     }
 
+    #[Override]
     public function next(): void
     {
         next($this->stays);
     }
 
-    public function key(): ?int
+    #[Override]
+    public function key(): int
     {
-        return key($this->stays);
+        return key($this->stays) ?? throw new OutOfBoundsException();
     }
 
+    #[Override]
     public function valid(): bool
     {
         return (bool) current($this->stays);
     }
 
+    #[Override]
     public function rewind(): void
     {
         reset($this->stays);
@@ -86,7 +98,7 @@ final class CountryJournal implements Countable, Iterator
      */
     private function ensureTypes(array $stays): void
     {
-        array_walk($stays, fn (mixed $value) => assert($value instanceof Stay));
+        array_walk($stays, fn (mixed $value) => $value instanceof Stay ?: throw new InvalidArgumentException());
     }
 
     /**

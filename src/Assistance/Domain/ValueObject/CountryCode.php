@@ -10,6 +10,7 @@ enum CountryCode: string
     case GEORGIA = 'GE';
     case RUSSIA = 'RU';
     case TURKEY = 'TR';
+    case UNITED_STATES = 'US';
 
     public static function any(): self
     {

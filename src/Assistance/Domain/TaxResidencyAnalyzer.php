@@ -9,6 +9,8 @@ use App\Assistance\Domain\CountryPolicy\Rule\CountryTaxResidencyRuleInterface;
 use App\Assistance\Domain\Entity\Journal;
 use App\Assistance\Domain\ValueObject\AnalysisOutcome;
 use App\Assistance\Domain\ValueObject\CountryOutcome;
+use App\Assistance\Domain\ValueObject\GroupingOperator;
+use App\Assistance\Domain\ValueObject\YearOutcome;
 
 final readonly class TaxResidencyAnalyzer
 {
@@ -28,11 +30,12 @@ final readonly class TaxResidencyAnalyzer
 
             $rulesOutcomes = [];
             foreach ($this->policiesRegistry->get($countryJournal->country) as $rule) {
-                /* @var CountryTaxResidencyRuleInterface $rule */
+                /** @var CountryTaxResidencyRuleInterface $rule */
                 $rulesOutcomes[] = $rule->check($countryJournal);
             }
 
-            $countriesOutcomes[] = new CountryOutcome($countryJournal->country, array_merge(...$rulesOutcomes));
+            $yearOutcomes = YearOutcome::groupByYear(array_merge(...$rulesOutcomes), GroupingOperator::OR);
+            $countriesOutcomes[] = new CountryOutcome($countryJournal->country, $yearOutcomes);
         }
 
         return new AnalysisOutcome($countriesOutcomes);

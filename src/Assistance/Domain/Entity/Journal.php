@@ -14,12 +14,14 @@ use App\Assistance\Domain\ValueObject\Stay;
 use Countable;
 use InvalidArgumentException;
 use Iterator;
+use OutOfBoundsException;
 use OutOfRangeException;
+use Override;
 
 /**
  * @template-implements Iterator<int,Stay>
  */
-class Journal implements Countable, Iterator
+final class Journal implements Countable, Iterator
 {
     use StayDatesOverlappingValidationTrait;
 
@@ -81,31 +83,41 @@ class Journal implements Countable, Iterator
         return $staysByCountry;
     }
 
+    #[Override]
     public function count(): int
     {
         return count($this->stays);
     }
 
+    #[Override]
     public function current(): Stay
     {
-        return $this->valid() ? current($this->stays) : throw new OutOfRangeException();
+        if ($this->valid() && ($current = current($this->stays))) {
+            return $current;
+        }
+
+        throw new OutOfRangeException();
     }
 
+    #[Override]
     public function next(): void
     {
         next($this->stays);
     }
 
-    public function key(): ?int
+    #[Override]
+    public function key(): int
     {
-        return key($this->stays);
+        return key($this->stays) ?? throw new OutOfBoundsException();
     }
 
+    #[Override]
     public function valid(): bool
     {
         return (bool) current($this->stays);
     }
 
+    #[Override]
     public function rewind(): void
     {
         reset($this->stays);
@@ -118,7 +130,7 @@ class Journal implements Countable, Iterator
      */
     private function ensureTypes(array $stays): void
     {
-        array_walk($stays, fn (mixed $value) => assert($value instanceof Stay));
+        array_walk($stays, fn (mixed $value) => $value instanceof Stay ?: throw new InvalidArgumentException());
     }
 
     /**

@@ -8,5 +8,5 @@ use App\Shared\Domain\Exception\ValidationException;
 
 class JournalValidationException extends ValidationException
 {
-    protected const MESSAGE_PREFIX = 'Journal validation error';
+    protected const string MESSAGE_PREFIX = 'Journal validation error';
 }

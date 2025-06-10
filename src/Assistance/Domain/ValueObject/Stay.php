@@ -6,6 +6,7 @@ namespace App\Assistance\Domain\ValueObject;
 
 use Countable;
 use DateTimeImmutable as Date;
+use Override;
 
 final readonly class Stay implements Countable
 {
@@ -22,10 +23,11 @@ final readonly class Stay implements Countable
     }
 
     /**
-     * Returns number of days in dates interval.
+     * Returns number of days in an interval.
      *
      * {@inheritDoc}
      */
+    #[Override]
     public function count(): int
     {
         return (int) $this->dateTo->diff($this->dateFrom)->days + 1;

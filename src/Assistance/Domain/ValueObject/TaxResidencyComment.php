@@ -4,14 +4,25 @@ declare(strict_types=1);
 
 namespace App\Assistance\Domain\ValueObject;
 
+use Override;
 use Stringable;
 
 final readonly class TaxResidencyComment implements Stringable
 {
-    public function __construct(
-        /** @var array<string> $comments */
-        public array $comments,
-    ) {
+    /**
+     * @var array<non-empty-string>
+     */
+    public array $comments;
+
+    /**
+     * @param array<string> $comments
+     */
+    public function __construct(array $comments)
+    {
+        /** @var array<non-empty-string> $comments */
+        $comments = array_filter($comments, fn ($value) => !empty(trim($value)));
+
+        $this->comments = $comments;
     }
 
     public static function single(string $comment): self
@@ -27,6 +38,7 @@ final readonly class TaxResidencyComment implements Stringable
         ));
     }
 
+    #[Override]
     public function __toString(): string
     {
         return implode('; ', $this->comments);
