@@ -28,7 +28,7 @@ The application implements these country-specific rules as policies, allowing fo
 ## Getting started
 
 ```shell
-$ cd trasst && make install && make start
+$ cd trasst && make install && make up
 ```
 Open https://localhost/api in web browser and accept the auto-generated TLS certificate.
 
