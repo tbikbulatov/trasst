@@ -9,13 +9,10 @@ use App\Assistance\Domain\ValueObject\YearOutcome;
 
 interface CountryTaxResidencyRuleInterface
 {
-    /**
-     * @return non-empty-string
-     */
     public function getDescription(): string;
 
     /**
-     * @return array<YearOutcome>
+     * @return array<int, YearOutcome> Indexed by years
      */
     public function check(CountryJournal $journal): array;
 }
