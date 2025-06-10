@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Assistance\Domain\ValueObject;
+namespace App\Tests\Unit\Assistance\Domain\ValueObject;
 
 use App\Assistance\Domain\ValueObject\CountryCode;
 use App\Assistance\Domain\ValueObject\Stay;

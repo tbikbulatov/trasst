@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Assistance\Domain\CountryPolicy\Rule;
+namespace App\Tests\Unit\Assistance\Domain\CountryPolicy\Rule;
 
 use App\Assistance\Domain\CountryPolicy\Rule\DaysForCalendarYearRule;
 use App\Assistance\Domain\ValueObject\CountryCode;
@@ -15,10 +15,6 @@ use DomainException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-use function PHPUnit\Framework\assertCount;
-use function PHPUnit\Framework\assertEquals;
-use function PHPUnit\Framework\assertFalse;
-use function PHPUnit\Framework\assertTrue;
 
 final class DaysForCalendarYearRuleTest extends TestCase
 {
@@ -69,7 +65,7 @@ final class DaysForCalendarYearRuleTest extends TestCase
         $outcome = $sut->check(new CountryJournal([$stay]));
 
         foreach ($outcome as $yearOutcome) {
-            assertFalse($yearOutcome->isResident);
+            $this->assertFalse($yearOutcome->isResident);
         }
     }
 
@@ -107,9 +103,9 @@ final class DaysForCalendarYearRuleTest extends TestCase
 
         $outcome = $sut->check($journal);
 
-        assertCount(1, $outcome, 'One-year outcome');
-        assertEquals([2021], $this->extractYears($outcome));
-        assertFalse(current($outcome)->isResident);
+        $this->assertCount(1, $outcome, 'One-year outcome');
+        $this->assertEquals([2021], $this->extractYears($outcome));
+        $this->assertFalse(current($outcome)->isResident);
     }
 
     public function testOneStayForTwoYearsForLessDaysInEachThanRequiredShouldNotLeadToResidency(): void
@@ -121,9 +117,9 @@ final class DaysForCalendarYearRuleTest extends TestCase
 
         $outcome = $sut->check($journal);
 
-        assertEquals([2020, 2021], $this->extractYears($outcome));
+        $this->assertEquals([2020, 2021], $this->extractYears($outcome));
         foreach ($outcome as $yearOutcome) {
-            assertFalse($yearOutcome->isResident);
+            $this->assertFalse($yearOutcome->isResident);
         }
     }
 
@@ -144,9 +140,9 @@ final class DaysForCalendarYearRuleTest extends TestCase
 
         $outcome = $sut->check($journal);
 
-        assertEquals([2019, 2020, 2021, 2022, 2023], $this->extractYears($outcome));
+        $this->assertEquals([2019, 2020, 2021, 2022, 2023], $this->extractYears($outcome));
         foreach ($outcome as $yearOutcome) {
-            assertFalse($yearOutcome->isResident);
+            $this->assertFalse($yearOutcome->isResident);
         }
     }
 
@@ -159,7 +155,7 @@ final class DaysForCalendarYearRuleTest extends TestCase
 
         $outcome = $sut->check($journal);
 
-        assertTrue(current($outcome)->isResident);
+        $this->assertTrue(current($outcome)->isResident);
     }
 
     /**
@@ -195,8 +191,8 @@ final class DaysForCalendarYearRuleTest extends TestCase
 
         $outcome = $sut->check($journal);
 
-        assertEquals([2021], $this->extractYears($outcome));
-        assertTrue(current($outcome)->isResident);
+        $this->assertEquals([2021], $this->extractYears($outcome));
+        $this->assertTrue(current($outcome)->isResident);
     }
 
     public function testOneStayForTwoYearsForEnoughDaysInOneOfThemShouldLeadToResidencyOnlyInIt(): void
@@ -208,9 +204,9 @@ final class DaysForCalendarYearRuleTest extends TestCase
 
         $outcome = $sut->check($journal);
 
-        assertEquals([2020, 2021], $this->extractYears($outcome));
-        assertFalse($outcome[2020]->isResident);
-        assertTrue($outcome[2021]->isResident);
+        $this->assertEquals([2020, 2021], $this->extractYears($outcome));
+        $this->assertFalse($outcome[2020]->isResident);
+        $this->assertTrue($outcome[2021]->isResident);
     }
 
     public function testOneStayForMultipleYearsForEnoughDaysInEachShouldLeadToResidencyInEachOfThem(): void
@@ -222,11 +218,11 @@ final class DaysForCalendarYearRuleTest extends TestCase
 
         $outcome = $sut->check($journal);
 
-        assertEquals([2019, 2020, 2021, 2022], $this->extractYears($outcome));
-        assertTrue($outcome[2019]->isResident);
-        assertTrue($outcome[2020]->isResident);
-        assertTrue($outcome[2021]->isResident);
-        assertTrue($outcome[2022]->isResident);
+        $this->assertEquals([2019, 2020, 2021, 2022], $this->extractYears($outcome));
+        $this->assertTrue($outcome[2019]->isResident);
+        $this->assertTrue($outcome[2020]->isResident);
+        $this->assertTrue($outcome[2021]->isResident);
+        $this->assertTrue($outcome[2022]->isResident);
     }
 
     public function testMultipleStaysForMultipleYearsForEnoughDaysInEachNotBoundaryYearsShouldLeadToResidency(): void
@@ -246,12 +242,12 @@ final class DaysForCalendarYearRuleTest extends TestCase
 
         $outcome = $sut->check($journal);
 
-        assertEquals([2019, 2020, 2021, 2022, 2023], $this->extractYears($outcome));
-        assertFalse($outcome[2019]->isResident);
-        assertTrue($outcome[2020]->isResident);
-        assertTrue($outcome[2021]->isResident);
-        assertTrue($outcome[2022]->isResident);
-        assertFalse($outcome[2023]->isResident);
+        $this->assertEquals([2019, 2020, 2021, 2022, 2023], $this->extractYears($outcome));
+        $this->assertFalse($outcome[2019]->isResident);
+        $this->assertTrue($outcome[2020]->isResident);
+        $this->assertTrue($outcome[2021]->isResident);
+        $this->assertTrue($outcome[2022]->isResident);
+        $this->assertFalse($outcome[2023]->isResident);
     }
 
     /**

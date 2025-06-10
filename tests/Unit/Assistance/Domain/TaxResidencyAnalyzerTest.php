@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Assistance\Domain;
+namespace App\Tests\Unit\Assistance\Domain;
 
 use App\Assistance\Domain\CountryPolicy\CountryTaxResidencyPoliciesRegistryInterface;
 use App\Assistance\Domain\CountryPolicy\Rule\CountryTaxResidencyRuleInterface;
@@ -13,9 +13,9 @@ use App\Assistance\Domain\ValueObject\Stay;
 use App\Assistance\Domain\ValueObject\StayPurpose;
 use App\Assistance\Domain\ValueObject\Year;
 use App\Assistance\Infrastructure\IdGenerator\JournalIdGenerator;
-use App\Tests\Assistance\Domain\CountryPolicy\Rule\DummyNoResidencyRule;
-use App\Tests\Assistance\Domain\CountryPolicy\Rule\DummyResidencyRule;
-use App\Tests\Assistance\Domain\ValueObject\CountryTaxPolicyMother;
+use App\Tests\Unit\Assistance\Domain\CountryPolicy\Rule\DummyNoResidencyRule;
+use App\Tests\Unit\Assistance\Domain\CountryPolicy\Rule\DummyResidencyRule;
+use App\Tests\Unit\Assistance\Domain\ValueObject\CountryTaxPolicyMother;
 use App\Tests\Common\BaseKernelTestCase;
 use DateTimeImmutable as Date;
 use Generator;

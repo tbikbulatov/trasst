@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Assistance\Domain\Entity;
+namespace App\Tests\Unit\Assistance\Domain\Entity;
 
 use App\Assistance\Domain\Entity\Journal;
 use App\Assistance\Domain\Exception\JournalHaveNoStaysException;

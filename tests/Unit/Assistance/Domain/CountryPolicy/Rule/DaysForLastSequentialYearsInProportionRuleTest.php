@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Assistance\Domain\CountryPolicy\Rule;
+namespace App\Tests\Unit\Assistance\Domain\CountryPolicy\Rule;
 
 use App\Assistance\Domain\CountryPolicy\Rule\DaysForLastSequentialYearsInProportionRule;
 use App\Assistance\Domain\ValueObject\CountryCode;
@@ -15,10 +15,6 @@ use DateTimeImmutable as Date;
 use DomainException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-
-use function PHPUnit\Framework\assertEquals;
-use function PHPUnit\Framework\assertFalse;
-use function PHPUnit\Framework\assertTrue;
 
 final class DaysForLastSequentialYearsInProportionRuleTest extends TestCase
 {
@@ -65,7 +61,7 @@ final class DaysForLastSequentialYearsInProportionRuleTest extends TestCase
 
         $result = $sut->getDescription();
 
-        assertEquals('Stay for 183 days for current and past years (in proportion)', $result);
+        $this->assertEquals('Stay for 183 days for current and past years (in proportion)', $result);
     }
 
     public function testSingleYearStayWithLessDaysThanRequiredShouldNotLeadToResidency(): void
@@ -77,8 +73,8 @@ final class DaysForLastSequentialYearsInProportionRuleTest extends TestCase
 
         $outcome = $sut->check($journal);
 
-        assertEquals([2021], $this->extractYears($outcome));
-        assertFalse($outcome[2021]->isResident);
+        $this->assertEquals([2021], $this->extractYears($outcome));
+        $this->assertFalse($outcome[2021]->isResident);
     }
 
     public function testSingleYearStayWithExactDaysRequiredShouldLeadToResidency(): void
@@ -90,8 +86,8 @@ final class DaysForLastSequentialYearsInProportionRuleTest extends TestCase
 
         $outcome = $sut->check($journal);
 
-        assertEquals([2021], $this->extractYears($outcome));
-        assertTrue($outcome[2021]->isResident);
+        $this->assertEquals([2021], $this->extractYears($outcome));
+        $this->assertTrue($outcome[2021]->isResident);
     }
 
     public function testSingleYearStayWithMoreDaysThanRequiredShouldLeadToResidency(): void
@@ -103,8 +99,8 @@ final class DaysForLastSequentialYearsInProportionRuleTest extends TestCase
 
         $outcome = $sut->check($journal);
 
-        assertEquals([2021], $this->extractYears($outcome));
-        assertTrue($outcome[2021]->isResident);
+        $this->assertEquals([2021], $this->extractYears($outcome));
+        $this->assertTrue($outcome[2021]->isResident);
     }
 
     public function testMultipleYearsWithProportionRatioShouldCalculateCorrectly(): void
@@ -127,9 +123,9 @@ final class DaysForLastSequentialYearsInProportionRuleTest extends TestCase
 
         $outcome = $sut->check($journal);
 
-        assertEquals([2020, 2021], $this->extractYears($outcome));
-        assertFalse($outcome[2020]->isResident); // 2020 alone doesn't have enough days
-        assertTrue($outcome[2021]->isResident); // 2021 with weighted 2020 days has enough
+        $this->assertEquals([2020, 2021], $this->extractYears($outcome));
+        $this->assertFalse($outcome[2020]->isResident); // 2020 alone doesn't have enough days
+        $this->assertTrue($outcome[2021]->isResident); // 2021 with weighted 2020 days has enough
     }
 
     public function testMultipleYearsWithProportionRatioNotEnoughDaysShouldNotLeadToResidency(): void
@@ -152,9 +148,9 @@ final class DaysForLastSequentialYearsInProportionRuleTest extends TestCase
 
         $outcome = $sut->check($journal);
 
-        assertEquals([2020, 2021], $this->extractYears($outcome));
-        assertFalse($outcome[2020]->isResident);
-        assertFalse($outcome[2021]->isResident);
+        $this->assertEquals([2020, 2021], $this->extractYears($outcome));
+        $this->assertFalse($outcome[2020]->isResident);
+        $this->assertFalse($outcome[2021]->isResident);
     }
 
     public function testMultipleYearsWithComplexProportionRatio(): void
@@ -181,10 +177,10 @@ final class DaysForLastSequentialYearsInProportionRuleTest extends TestCase
 
         $outcome = $sut->check($journal);
 
-        assertEquals([2019, 2020, 2021], $this->extractYears($outcome));
-        assertFalse($outcome[2019]->isResident);
-        assertFalse($outcome[2020]->isResident);
-        assertFalse($outcome[2021]->isResident);
+        $this->assertEquals([2019, 2020, 2021], $this->extractYears($outcome));
+        $this->assertFalse($outcome[2019]->isResident);
+        $this->assertFalse($outcome[2020]->isResident);
+        $this->assertFalse($outcome[2021]->isResident);
 
         // Now let's try with a lower threshold
         $sut = new DaysForLastSequentialYearsInProportionRule(
@@ -196,9 +192,9 @@ final class DaysForLastSequentialYearsInProportionRuleTest extends TestCase
 
         $outcome = $sut->check($journal);
 
-        assertFalse($outcome[2019]->isResident);
-        assertFalse($outcome[2020]->isResident);
-        assertTrue($outcome[2021]->isResident); // Now 2021 has enough days with the weighted sum
+        $this->assertFalse($outcome[2019]->isResident);
+        $this->assertFalse($outcome[2020]->isResident);
+        $this->assertTrue($outcome[2021]->isResident); // Now 2021 has enough days with the weighted sum
     }
 
     /**

@@ -1,0 +1,6 @@
+framework:
+    cache:
+        pools:
+            journal.cache:
+                adapter: cache.adapter.apcu
+                default_lifetime: 86400

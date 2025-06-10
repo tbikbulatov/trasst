@@ -85,7 +85,7 @@ final class JournalResource
         public ?JournalId $id = null,
 
         /** @var array<int,StayResource> $stays Stays */
-        #[Assert\Count(['min' => 1])]
+        #[Assert\Count(min: 1)]
         #[ApiProperty(
             readable: true,
             writable: true,

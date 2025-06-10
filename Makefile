@@ -79,14 +79,22 @@ deptrac:
 	#@echo "\n${YELLOW}Checking Hexagonal layers...${RESET}"
 	@$(EXEC) vendor/bin/deptrac analyze -c deptrac_layers.yaml --cache-file=.deptrac_layers.cache -n --no-progress --fail-on-uncovered --report-uncovered
 
-## Run phpunit tests
-phpunit:
-	@$(EXEC) vendor/phpunit/phpunit/phpunit
+## Run all phpunit tests
+tests:
+	@$(EXEC) vendor/phpunit/phpunit/phpunit --testsuite=All
+
+## Run only unit tests
+unit-tests:
+	@$(EXEC) vendor/phpunit/phpunit/phpunit --testsuite=Unit
+
+## Run only API tests
+api-tests:
+	@$(EXEC) vendor/phpunit/phpunit/phpunit --testsuite=Api
 
 ## Run either static analysis and tests
-ci: cs psalm deptrac phpunit
+ci: cs psalm deptrac tests
 
-.PHONY: cs psalm deptrac phpunit ci
+.PHONY: cs psalm deptrac tests unit-tests api-tests ci
 
 
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Assistance\Domain\CountryPolicy\Rule;
+namespace App\Tests\Unit\Assistance\Domain\CountryPolicy\Rule;
 
 use App\Assistance\Domain\CountryPolicy\Rule\AndRule;
 use App\Assistance\Domain\CountryPolicy\Rule\CountryTaxResidencyRuleInterface;
@@ -17,10 +17,6 @@ use DateTimeImmutable as Date;
 use DomainException;
 use PHPUnit\Framework\TestCase;
 
-use function PHPUnit\Framework\assertCount;
-use function PHPUnit\Framework\assertEquals;
-use function PHPUnit\Framework\assertFalse;
-use function PHPUnit\Framework\assertTrue;
 
 final class AndRuleTest extends TestCase
 {
@@ -42,7 +38,7 @@ final class AndRuleTest extends TestCase
 
         $result = $sut->getDescription();
 
-        assertEquals('AND composition rule: Rule1 description; Rule2 description', $result);
+        $this->assertEquals('AND composition rule: Rule1 description; Rule2 description', $result);
     }
 
     public function testCheckWithSingleRuleReturnsSameResult(): void
@@ -54,9 +50,9 @@ final class AndRuleTest extends TestCase
 
         $result = $sut->check($journal);
 
-        assertCount(1, $result);
-        assertTrue($result[2021]->isResident);
-        assertEquals('Dummy residency rule', (string) $result[2021]->residencyComment);
+        $this->assertCount(1, $result);
+        $this->assertTrue($result[2021]->isResident);
+        $this->assertEquals('Dummy residency rule', (string) $result[2021]->residencyComment);
     }
 
     public function testCheckWithMultipleResidentRulesReturnsResidentOutcome(): void
@@ -69,9 +65,9 @@ final class AndRuleTest extends TestCase
 
         $result = $sut->check($journal);
 
-        assertCount(1, $result);
-        assertTrue($result[2021]->isResident);
-        assertEquals('Dummy residency rule; Dummy residency rule', (string) $result[2021]->residencyComment);
+        $this->assertCount(1, $result);
+        $this->assertTrue($result[2021]->isResident);
+        $this->assertEquals('Dummy residency rule; Dummy residency rule', (string) $result[2021]->residencyComment);
     }
 
     public function testCheckWithOneNonResidentRuleReturnsNonResidentOutcome(): void
@@ -84,8 +80,8 @@ final class AndRuleTest extends TestCase
 
         $result = $sut->check($journal);
 
-        assertCount(1, $result);
-        assertFalse($result[2021]->isResident);
+        $this->assertCount(1, $result);
+        $this->assertFalse($result[2021]->isResident);
     }
 
     public function testCheckWithAllNonResidentRulesReturnsNonResidentOutcome(): void
@@ -98,8 +94,8 @@ final class AndRuleTest extends TestCase
 
         $result = $sut->check($journal);
 
-        assertCount(1, $result);
-        assertFalse($result[2021]->isResident);
+        $this->assertCount(1, $result);
+        $this->assertFalse($result[2021]->isResident);
     }
 
     public function testCheckWithMultipleYearsReturnsCorrectOutcomes(): void
@@ -118,10 +114,10 @@ final class AndRuleTest extends TestCase
 
         $result = $sut->check($journal);
 
-        assertCount(3, $result);
-        assertTrue($result[2020]->isResident);
-        assertFalse($result[2021]->isResident);
-        assertTrue($result[2022]->isResident);
+        $this->assertCount(3, $result);
+        $this->assertTrue($result[2020]->isResident);
+        $this->assertFalse($result[2021]->isResident);
+        $this->assertTrue($result[2022]->isResident);
     }
 
     public function testCheckWithMockRules(): void
@@ -143,9 +139,9 @@ final class AndRuleTest extends TestCase
 
         $result = $sut->check($journal);
 
-        assertCount(1, $result);
-        assertTrue($result[2021]->isResident);
-        assertEquals('Rule 1; Rule 2', (string) $result[2021]->residencyComment);
+        $this->assertCount(1, $result);
+        $this->assertTrue($result[2021]->isResident);
+        $this->assertEquals('Rule 1; Rule 2', (string) $result[2021]->residencyComment);
     }
 
     private function createValidJournal(): CountryJournal

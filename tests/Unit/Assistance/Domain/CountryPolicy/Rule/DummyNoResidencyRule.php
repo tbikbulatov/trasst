@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Assistance\Domain\CountryPolicy\Rule;
+namespace App\Tests\Unit\Assistance\Domain\CountryPolicy\Rule;
 
 use App\Assistance\Domain\CountryPolicy\Rule\CountryTaxResidencyRuleInterface;
 use App\Assistance\Domain\ValueObject\CountryJournal;
