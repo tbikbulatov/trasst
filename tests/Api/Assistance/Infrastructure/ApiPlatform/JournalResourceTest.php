@@ -85,14 +85,14 @@ class JournalResourceTest extends ApiTestCase
     {
         $nonExistentId = Uuid::v7()->__toString();
 
-        $this->client->request('GET', '/api/journals/'.$nonExistentId);
+        $resp = $this->client->request('GET', '/api/journals/'.$nonExistentId);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
-        $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
+        $this->assertResponseHeaderSame('content-type', 'application/problem+json; charset=utf-8');
         $this->assertJsonContains([
             '@context' => '/api/contexts/Error',
-            '@type' => 'hydra:Error',
-            'hydra:title' => 'An error occurred',
+            '@type' => 'Error',
+            'title' => 'An error occurred',
         ]);
     }
 

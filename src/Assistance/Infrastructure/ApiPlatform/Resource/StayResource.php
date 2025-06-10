@@ -19,6 +19,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
     shortName: 'Stay',
+    types: ['https://schema.org/Thing'],
     operations: [
         new Get(controller: NotFoundAction::class),
     ],

@@ -5,3 +5,9 @@ api_platform:
         versions: [3]
     defaults:
         collectDenormalizationErrors: true
+    inflector: api_platform.metadata.inflector
+    serializer:
+        hydra_prefix: false
+    mapping:
+        paths:
+            - '%kernel.project_dir%/src/Assistance/Infrastructure/ApiPlatform/Resource'

@@ -36,6 +36,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 #[ApiResource(
     shortName: 'Journal',
+    types: ['https://schema.org/Thing'],
     operations: [
         new Get(provider: JournalItemProvider::class),
         new GetCollection(controller: NotFoundAction::class, output: false, read: false),
@@ -91,7 +92,6 @@ final class JournalResource
             writable: true,
             readableLink: true,
             writableLink: true,
-            openapiContext: ['type' => 'array', 'items' => ['$ref' => '#/components/schemas/Stay']],
             builtinTypes: [
                 new Type(
                     builtinType: Type::BUILTIN_TYPE_ARRAY,
