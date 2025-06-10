@@ -6,6 +6,7 @@ namespace App\Assistance\Domain\CountryPolicy;
 
 use App\Assistance\Domain\CountryPolicy\Rule\DaysForCalendarYearRule;
 use App\Assistance\Domain\ValueObject\CountryCode;
+use Override;
 
 final class ArmeniaTaxResidencyPolicy extends AbstractTaxResidencyPolicy
 {
@@ -16,6 +17,7 @@ final class ArmeniaTaxResidencyPolicy extends AbstractTaxResidencyPolicy
         ];
     }
 
+    #[Override]
     public static function getCountryCode(): string
     {
         return CountryCode::ARMENIA->value;
